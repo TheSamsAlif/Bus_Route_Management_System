@@ -41,12 +41,15 @@ app.get('*', (req, res) => {
   }
 });
 
+seedDatabase();
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  seedDatabase();
-  console.log(`Gontoboddh BD Server v2.0 Running on http://localhost:${PORT}`);
-  console.log(`Developed by Sams Alif`);
-  const _db = getDb(); console.log(`Database: In-Memory (${_db.routes.length} routes, ${_db.buses.length} buses)`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Gontoboddh BD Server v2.0 Running on http://localhost:${PORT}`);
+    console.log(`Developed by Sams Alif`);
+    const _db = getDb(); console.log(`Database: In-Memory (${_db.routes.length} routes, ${_db.buses.length} buses)`);
+  });
+}
 
 module.exports = app;
