@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>গন্তব্য BD - Smart Bus Route & Fare Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <div id="splash-screen">
+    <div class="splash-bg"></div>
+    <div class="splash-content">
+      <div class="splash-icon"><i class="fas fa-bus"></i></div>
+      <h1>গন্তব্য BD</h1>
+      <p>স্মার্ট বাস রুট ও ভাড়া ম্যানেজমেন্ট</p>
+      <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+      <div class="splash-credit">DEVELOPED BY SAMS ALIF</div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <header class="glass-header">
+      <div class="logo"><i class="fas fa-bus"></i><span>গন্তব্য BD</span></div>
+      <div class="header-right">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="icon-btn" id="lang-toggle"><i class="fas fa-language"></i></button>
+        <button class="icon-btn" id="notif-btn"><i class="fas fa-bell"></i><span class="notification-badge">0</span></button>
+        <div class="user-btn" id="user-btn"><i class="fas fa-user"></i></div>
+      </div>
+    </header>
+
+    <main class="main-content" id="main-content"></main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>হোম</span></button>
+      <button class="nav-item" data-page="routes"><i class="fas fa-route"></i><span>রুট</span></button>
+      <button class="nav-item" data-page="buses"><i class="fas fa-bus"></i><span>বাস</span></button>
+      <button class="nav-item" data-page="calculator"><i class="fas fa-calculator"></i><span>ভাড়া</span></button>
+      <button class="nav-item" data-page="favorites"><i class="fas fa-heart"></i><span>পছন্দ</span></button>
+      <button class="nav-item" data-page="profile"><i class="fas fa-user"></i><span>প্রোফাইল</span></button>
+    </nav>
+
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-box" id="modal-box">
+        <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <div class="auth-modal" id="auth-modal">
+      <div class="auth-box">
+        <button class="auth-close" id="auth-close"><i class="fas fa-times"></i></button>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">লগিন</button>
+          <button class="auth-tab" data-tab="register">রেজিস্টার</button>
+        </div>
+        <form class="auth-form" id="auth-form">
+          <div class="fg" id="name-fg" style="display:none">
+            <label>নাম</label>
+            <input type="text" name="name" placeholder="আপনার নাম">
+          </div>
+          <div class="fg">
+            <label>ইউজারনেম</label>
+            <input type="text" name="username" placeholder="ইউজারনেম" required>
+          </div>
+          <div class="fg">
+            <label>পাসওয়ার্ড</label>
+            <input type="password" name="password" placeholder="পাসওয়ার্ড" required>
+          </div>
+          <button type="submit" class="auth-submit"><span>লগিন</span> <i class="fas fa-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <div id="offline-banner" class="offline-banner hidden">
+      <i class="fas fa-wifi-slash"></i> আপনি অফলাইনে আছেন — কিছু তথ্য দেখানো সম্ভব নয়
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
