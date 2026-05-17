@@ -217,101 +217,9 @@ function seedDatabase() {
     { _id: id(), category: 'dtca', busType: 'ac', baseFare: 10, perKmRate: 3.89, minFare: 10, peakHourMultiplier: 1.2, studentDiscount: 0, isActive: true, createdAt: new Date() }
   );
 
-  // ========== ROUTES (60+ routes) ==========
-  const r = {};
+  // ========== ROUTES (from dhakaRoutes.js) ==========
 
-  function createRoute(key, data) {
-    const stops = data.stops.map((s, i) => ({
-      name: s, order: i + 1,
-      distance: Math.round(data.dist * (i + 1) / data.stops.length)
-    }));
-    const routeObj = {
-      _id: id(), name: data.name, from: data.from, to: data.to,
-      category: data.cat, distance: data.dist, estimatedTime: data.time,
-      busStops: stops, buses: [], trafficStatus: data.traf,
-      isActive: true, searchCount: data.cnt || 100, createdAt: new Date(),
-      description: data.desc || '',
-      hasAlternateRoutes: data.alt || false,
-      popular: data.pop || false,
-      isExpress: data.express || false,
-      fareRange: data.fareRange || { min: 10, max: 30 }
-    };
-    db.routes.push(routeObj);
-    r[key] = routeObj;
-    return routeObj;
-  }
-
-  // ---- DHAKA CITY ROUTES (30 routes) ----
-  createRoute('r1', { name:'গুলিস্তান-মতিঝিল', from:'গুলিস্তান', to:'মতিঝিল', cat:'dhaka_city', dist:5, time:20, stops:['গুলিস্তান','পল্টন','মতিঝিল'], traf:'high', cnt:500, pop:true, fareRange:{min:10,max:20} });
-  createRoute('r2', { name:'মতিঝিল-শাহবাগ', from:'মতিঝিল', to:'শাহবাগ', cat:'dhaka_city', dist:4, time:15, stops:['মতিঝিল','পল্টন','কাকরাইল','শাহবাগ'], traf:'medium', cnt:450, pop:true });
-  createRoute('r3', { name:'ফার্মগেট-মিরপুর ১২', from:'ফার্মগেট', to:'মিরপুর ১২', cat:'dhaka_city', dist:10, time:40, stops:['ফার্মগেট','কাওরান বাজার','শ্যামলী','পল্লবী','মিরপুর ১০','মিরপুর ১২'], traf:'high', cnt:480, pop:true, fareRange:{min:20,max:40} });
-  createRoute('r4', { name:'উত্তরা-সদরঘাট', from:'উত্তরা', to:'সদরঘাট', cat:'dhaka_city', dist:20, time:75, stops:['উত্তরা','হাউজ বিল্ডিং','মিরপুর ১২','শ্যামলী','আগারগাঁও','বিজয় সরণি','শাহবাগ','সদরঘাট'], traf:'high', cnt:420, pop:true });
-  createRoute('r5', { name:'মোহাম্মদপুর-গুলশান', from:'মোহাম্মদপুর', to:'গুলশান', cat:'dhaka_city', dist:14, time:50, stops:['মোহাম্মদপুর','লালমাটিয়া','শ্যামলী','আগারগাঁও','বিজয় সরণি','মহাখালী','বনানী','গুলশান'], traf:'medium', cnt:350, pop:true });
-  createRoute('r6', { name:'সাভার-যাত্রাবাড়ী', from:'সাভার', to:'যাত্রাবাড়ী', cat:'dhaka_city', dist:28, time:95, stops:['সাভার','আশুলিয়া','নবীনগর','ধানমন্ডি','শাহবাগ','কমলাপুর','যাত্রাবাড়ী'], traf:'medium', cnt:300, pop:true, fareRange:{min:30,max:60} });
-  createRoute('r7', { name:'ধানমন্ডি-কামরাঙ্গীরচর', from:'ধানমন্ডি', to:'কামরাঙ্গীরচর', cat:'dhaka_city', dist:10, time:35, stops:['ধানমন্ডি','লালমাটিয়া','নিউমার্কেট','সদরঘাট','কামরাঙ্গীরচর'], traf:'high', cnt:280 });
-  createRoute('r8', { name:'বনানী-যাত্রাবাড়ী', from:'বনানী', to:'যাত্রাবাড়ী', cat:'dhaka_city', dist:15, time:55, stops:['বনানী','মহাখালী','ফার্মগেট','শাহবাগ','কমলাপুর','যাত্রাবাড়ী'], traf:'high', cnt:260 });
-  createRoute('r9', { name:'রামপুরা-শাহবাগ', from:'রামপুরা', to:'শাহবাগ', cat:'dhaka_city', dist:7, time:25, stops:['রামপুরা','মালিবাগ','মৌচাক','সায়েদাবাদ','যাত্রাবাড়ী','কমলাপুর','শাহবাগ'], traf:'medium', cnt:240 });
-  createRoute('r10', { name:'বাড্ডা-শ্যামলী', from:'বাড্ডা', to:'শ্যামলী', cat:'dhaka_city', dist:12, time:45, stops:['বাড্ডা','গুলশান','বনানী','মহাখালী','বিজয় সরণি','শ্যামলী'], traf:'medium', cnt:220 });
-  createRoute('r11', { name:'গুলশান-নারায়ণগঞ্জ', from:'গুলশান', to:'নারায়ণগঞ্জ', cat:'dhaka_city', dist:22, time:65, stops:['গুলশান','বনানী','কুড়িল','যাত্রাবাড়ী','সাইনবোর্ড','চাষাড়া','নারায়ণগঞ্জ'], traf:'high', cnt:340, pop:true, fareRange:{min:30,max:70} });
-  createRoute('r12', { name:'মতিঝিল-গাজীপুর', from:'মতিঝিল', to:'গাজীপুর', cat:'intercity', dist:32, time:85, stops:['মতিঝিল','ফার্মগেট','মহাখালী','বিমানবন্দর','টঙ্গী','বোর্ড বাজার','গাজীপুর চৌরাস্তা','গাজীপুর'], traf:'medium', cnt:310, pop:true, fareRange:{min:40,max:80} });
-  createRoute('r13', { name:'সদরঘাট-নারায়ণগঞ্জ', from:'সদরঘাট', to:'নারায়ণগঞ্জ', cat:'dhaka_city', dist:20, time:60, stops:['সদরঘাট','কামরাঙ্গীরচর','যাত্রাবাড়ী','সাইনবোর্ড','চাষাড়া','নারায়ণগঞ্জ'], traf:'high', cnt:290, pop:true });
-  createRoute('r14', { name:'যাত্রাবাড়ী-নারায়ণগঞ্জ', from:'যাত্রাবাড়ী', to:'নারায়ণগঞ্জ', cat:'dhaka_city', dist:15, time:40, stops:['যাত্রাবাড়ী','সাইনবোর্ড','চাষাড়া','নারায়ণগঞ্জ'], traf:'high', cnt:350, pop:true });
-  createRoute('r15', { name:'মহাখালী-গাজীপুর', from:'মহাখালী', to:'গাজীপুর', cat:'intercity', dist:28, time:60, stops:['মহাখালী','বনানী','কুড়িল','বিমানবন্দর','টঙ্গী','গাজীপুর চৌরাস্তা','গাজীপুর'], traf:'medium', cnt:270, pop:true, fareRange:{min:35,max:70} });
-  createRoute('r16', { name:'মিরপুর ১০-নারায়ণগঞ্জ', from:'মিরপুর ১০', to:'নারায়ণগঞ্জ', cat:'dhaka_city', dist:28, time:90, stops:['মিরপুর ১০','শ্যামলী','আগারগাঁও','বিজয় সরণি','ধানমন্ডি','শাহবাগ','যাত্রাবাড়ী','নারায়ণগঞ্জ'], traf:'high', cnt:230 });
-  createRoute('r17', { name:'টঙ্গী-সাভার', from:'টঙ্গী', to:'সাভার', cat:'dhaka_city', dist:20, time:55, stops:['টঙ্গী','গাজীপুর চৌরাস্তা','বোর্ড বাজার','আশুলিয়া','সাভার'], traf:'medium', cnt:200 });
-  createRoute('r18', { name:'নারায়ণগঞ্জ-গাজীপুর', from:'নারায়ণগঞ্জ', to:'গাজীপুর', cat:'intercity', dist:38, time:95, stops:['নারায়ণগঞ্জ','চাষাড়া','সাইনবোর্ড','যাত্রাবাড়ী','ঢাকা','টঙ্গী','বোর্ড বাজার','গাজীপুর'], traf:'medium', cnt:190 });
-  createRoute('r19', { name:'কেরানীগঞ্জ-মতিঝিল', from:'কেরানীগঞ্জ', to:'মতিঝিল', cat:'dhaka_city', dist:18, time:55, stops:['কেরানীগঞ্জ','যাত্রাবাড়ী','সায়েদাবাদ','কমলাপুর','পল্টন','মতিঝিল'], traf:'high', cnt:210 });
-  createRoute('r20', { name:'ঢাকা-টঙ্গী', from:'ঢাকা', to:'টঙ্গী', cat:'intercity', dist:22, time:55, stops:['ঢাকা','মহাখালী','বিমানবন্দর','টঙ্গী'], traf:'medium', cnt:320, pop:true, fareRange:{min:30,max:50} });
-  createRoute('r21', { name:'মতিঝিল-উত্তরা', from:'মতিঝিল', to:'উত্তরা', cat:'dhaka_city', dist:18, time:60, stops:['মতিঝিল','পল্টন','শাহবাগ','ফার্মগেট','বিজয় সরণি','মহাখালী','হাউজ বিল্ডিং','উত্তরা'], traf:'high', cnt:380, pop:true });
-  createRoute('r22', { name:'গুলশান-মিরপুর ১০', from:'গুলশান', to:'মিরপুর ১০', cat:'dhaka_city', dist:12, time:40, stops:['গুলশান','বনানী','মহাখালী','বিজয় সরণি','শ্যামলী','মিরপুর ১০'], traf:'medium', cnt:310 });
-  createRoute('r23', { name:'যাত্রাবাড়ী-উত্তরা', from:'যাত্রাবাড়ী', to:'উত্তরা', cat:'dhaka_city', dist:22, time:80, stops:['যাত্রাবাড়ী','কমলাপুর','শাহবাগ','ফার্মগেট','বিজয় সরণি','মহাখালী','হাউজ বিল্ডিং','উত্তরা'], traf:'high', cnt:290 });
-  createRoute('r24', { name:'গাজীপুর-সাভার', from:'গাজীপুর', to:'সাভার', cat:'dhaka_city', dist:25, time:70, stops:['গাজীপুর','বোর্ড বাজার','টঙ্গী','আশুলিয়া','সাভার'], traf:'medium', cnt:180 });
-  createRoute('r25', { name:'মিরপুর ১২-মতিঝিল', from:'মিরপুর ১২', to:'মতিঝিল', cat:'dhaka_city', dist:15, time:55, stops:['মিরপুর ১২','পল্লবী','শ্যামলী','আগারগাঁও','বিজয় সরণি','শাহবাগ','পল্টন','মতিঝিল'], traf:'high', cnt:330, pop:true });
-  createRoute('r26', { name:'বাড্ডা-মতিঝিল', from:'বাড্ডা', to:'মতিঝিল', cat:'dhaka_city', dist:10, time:35, stops:['বাড্ডা','রামপুরা','মালিবাগ','মৌচাক','পল্টন','মতিঝিল'], traf:'medium', cnt:250 });
-  createRoute('r27', { name:'উত্তরা-নারায়ণগঞ্জ', from:'উত্তরা', to:'নারায়ণগঞ্জ', cat:'intercity', dist:35, time:90, stops:['উত্তরা','বিমানবন্দর','কুড়িল','বনানী','যাত্রাবাড়ী','সাইনবোর্ড','নারায়ণগঞ্জ'], traf:'medium', cnt:210 });
-  createRoute('r28', { name:'মোহাম্মদপুর-যাত্রাবাড়ী', from:'মোহাম্মদপুর', to:'যাত্রাবাড়ী', cat:'dhaka_city', dist:14, time:50, stops:['মোহাম্মদপুর','লালমাটিয়া','ধানমন্ডি','শাহবাগ','কমলাপুর','যাত্রাবাড়ী'], traf:'medium', cnt:200 });
-  createRoute('r29', { name:'সাভার-উত্তরা', from:'সাভার', to:'উত্তরা', cat:'dhaka_city', dist:22, time:65, stops:['সাভার','আশুলিয়া','নবীনগর','মিরপুর ১২','পল্লবী','হাউজ বিল্ডিং','উত্তরা'], traf:'medium', cnt:190 });
-  createRoute('r30', { name:'গাজীপুর-মিরপুর ১০', from:'গাজীপুর', to:'মিরপুর ১০', cat:'intercity', dist:25, time:65, stops:['গাজীপুর','বোর্ড বাজার','টঙ্গী','বিমানবন্দর','কুড়িল','বনানী','মহাখালী','শ্যামলী','মিরপুর ১০'], traf:'medium', cnt:230, pop:true });
-
-  // ---- MORE DHAKA CITY ROUTES (15 more) ----
-  createRoute('r31', { name:'শাহবাগ-টঙ্গী', from:'শাহবাগ', to:'টঙ্গী', cat:'intercity', dist:18, time:50, stops:['শাহবাগ','ফার্মগেট','মহাখালী','বিমানবন্দর','টঙ্গী'], traf:'medium', cnt:280, pop:true });
-  createRoute('r32', { name:'কেরানীগঞ্জ-নারায়ণগঞ্জ', from:'কেরানীগঞ্জ', to:'নারায়ণগঞ্জ', cat:'dhaka_city', dist:20, time:55, stops:['কেরানীগঞ্জ','যাত্রাবাড়ী','সাইনবোর্ড','নারায়ণগঞ্জ'], traf:'high', cnt:200 });
-  createRoute('r33', { name:'গাজীপুর-ডেমরা', from:'গাজীপুর', to:'ডেমরা', cat:'intercity', dist:35, time:90, stops:['গাজীপুর','টঙ্গী','বিমানবন্দর','কুড়িল','বাড্ডা','যাত্রাবাড়ী','ডেমরা'], traf:'medium', cnt:150 });
-  createRoute('r34', { name:'উত্তরা-কুড়িল', from:'উত্তরা', to:'কুড়িল', cat:'dhaka_city', dist:10, time:30, stops:['উত্তরা','হাউজ বিল্ডিং','বিমানবন্দর','নিকুঞ্জ','খিলখেত','কুড়িল'], traf:'medium', cnt:220 });
-  createRoute('r35', { name:'সাভার-আশুলিয়া লোকাল', from:'সাভার', to:'আশুলিয়া', cat:'dhaka_city', dist:8, time:25, stops:['সাভার','নবীনগর','আশুলিয়া'], traf:'low', cnt:160 });
-  createRoute('r36', { name:'মিরপুর ১০-বাড্ডা', from:'মিরপুর ১০', to:'বাড্ডা', cat:'dhaka_city', dist:14, time:45, stops:['মিরপুর ১০','শ্যামলী','আগারগাঁও','বিজয় সরণি','মহাখালী','বনানী','গুলশান','বাড্ডা'], traf:'medium', cnt:240 });
-  createRoute('r37', { name:'বনানী-টঙ্গী', from:'বনানী', to:'টঙ্গী', cat:'intercity', dist:12, time:35, stops:['বনানী','কুড়িল','বিমানবন্দর','টঙ্গী'], traf:'medium', cnt:260, pop:true });
-  createRoute('r38', { name:'নিকুঞ্জ-মতিঝিল', from:'নিকুঞ্জ', to:'মতিঝিল', cat:'dhaka_city', dist:16, time:50, stops:['নিকুঞ্জ','কুড়িল','বাড্ডা','রামপুরা','মালিবাগ','পল্টন','মতিঝিল'], traf:'medium', cnt:190 });
-  createRoute('r39', { name:'মানিকগঞ্জ-ঢাকা', from:'মানিকগঞ্জ', to:'ঢাকা', cat:'intercity', dist:40, time:90, stops:['মানিকগঞ্জ','সাভার','আশুলিয়া','নবীনগর','ধানমন্ডি','ঢাকা'], traf:'medium', cnt:170, fareRange:{min:50,max:80} });
-  createRoute('r40', { name:'মোহাম্মদপুর-টঙ্গী', from:'মোহাম্মদপুর', to:'টঙ্গী', cat:'intercity', dist:20, time:60, stops:['মোহাম্মদপুর','শ্যামলী','আগারগাঁও','বিজয় সরণি','মহাখালী','বিমানবন্দর','টঙ্গী'], traf:'medium', cnt:210 });
-  createRoute('r41', { name:'গুলশান-সাভার', from:'গুলশান', to:'সাভার', cat:'dhaka_city', dist:20, time:60, stops:['গুলশান','বনানী','মহাখালী','বিজয় সরণি','শ্যামলী','নবীনগর','সাভার'], traf:'medium', cnt:200 });
-  createRoute('r42', { name:'যাত্রাবাড়ী-মিরপুর ১২', from:'যাত্রাবাড়ী', to:'মিরপুর ১২', cat:'dhaka_city', dist:18, time:65, stops:['যাত্রাবাড়ী','কমলাপুর','শাহবাগ','বিজয় সরণি','শ্যামলী','পল্লবী','মিরপুর ১২'], traf:'high', cnt:260 });
-  createRoute('r43', { name:'ঢাকা-বোর্ড বাজার', from:'ঢাকা', to:'বোর্ড বাজার', cat:'intercity', dist:25, time:65, stops:['ঢাকা','মহাখালী','বিমানবন্দর','টঙ্গী','বোর্ড বাজার'], traf:'medium', cnt:230, pop:true });
-  createRoute('r44', { name:'উত্তরা-ডেমরা', from:'উত্তরা', to:'ডেমরা', cat:'dhaka_city', dist:28, time:85, stops:['উত্তরা','বিমানবন্দর','কুড়িল','বাড্ডা','রামপুরা','যাত্রাবাড়ী','ডেমরা'], traf:'high', cnt:160 });
-  createRoute('r45', { name:'সাইনবোর্ড-মিরপুর ১০', from:'সাইনবোর্ড', to:'মিরপুর ১০', cat:'dhaka_city', dist:22, time:75, stops:['সাইনবোর্ড','যাত্রাবাড়ী','কমলাপুর','শাহবাগ','বিজয় সরণি','শ্যামলী','মিরপুর ১০'], traf:'high', cnt:200 });
-
-  // ---- INTERCITY / LONG ROUTES (15 routes) ----
-  createRoute('r46', { name:'ঢাকা-নারায়ণগঞ্জ', from:'ঢাকা', to:'নারায়ণগঞ্জ', cat:'intercity', dist:16, time:45, stops:['ঢাকা','যাত্রাবাড়ী','সাইনবোর্ড','চাষাড়া','নারায়ণগঞ্জ'], traf:'high', cnt:400, pop:true, fareRange:{min:20,max:50} });
-  createRoute('r47', { name:'ঢাকা-চট্টগ্রাম', from:'ঢাকা', to:'চট্টগ্রাম', cat:'intercity', dist:240, time:360, stops:['ঢাকা','কুমিল্লা','ফেনী','চট্টগ্রাম'], traf:'low', cnt:600, pop:true, fareRange:{min:550,max:1200}, express:true });
-  createRoute('r48', { name:'ঢাকা-সিলেট', from:'ঢাকা', to:'সিলেট', cat:'intercity', dist:310, time:420, stops:['ঢাকা','মৌলভীবাজার','সিলেট'], traf:'low', cnt:450, pop:true, fareRange:{min:650,max:1400}, express:true });
-  createRoute('r49', { name:'ঢাকা-খুলনা', from:'ঢাকা', to:'খুলনা', cat:'long_route', dist:330, time:480, stops:['ঢাকা','পাবনা','খুলনা'], traf:'medium', cnt:350, fareRange:{min:700,max:1500} });
-  createRoute('r50', { name:'ঢাকা-রাজশাহী', from:'ঢাকা', to:'রাজশাহী', cat:'long_route', dist:240, time:360, stops:['ঢাকা','সিরাজগঞ্জ','রাজশাহী'], traf:'low', cnt:300, fareRange:{min:500,max:1000} });
-  createRoute('r51', { name:'ঢাকা-বরিশাল', from:'ঢাকা', to:'বরিশাল', cat:'long_route', dist:280, time:400, stops:['ঢাকা','মাদারীপুর','বরিশাল'], traf:'low', cnt:280, fareRange:{min:550,max:1200} });
-  createRoute('r52', { name:'ঢাকা-ময়মনসিংহ', from:'ঢাকা', to:'ময়মনসিংহ', cat:'intercity', dist:120, time:180, stops:['ঢাকা','গাজীপুর','ময়মনসিংহ'], traf:'medium', cnt:250, fareRange:{min:250,max:500} });
-  createRoute('r53', { name:'ঢাকা-বেনাপোল', from:'ঢাকা', to:'বেনাপোল', cat:'long_route', dist:350, time:480, stops:['ঢাকা','যশোর','বেনাপোল'], traf:'low', cnt:200, fareRange:{min:700,max:1500} });
-  createRoute('r54', { name:'ঢাকা-কক্সবাজার', from:'ঢাকা', to:'কক্সবাজার', cat:'long_route', dist:400, time:600, stops:['ঢাকা','চট্টগ্রাম','কক্সবাজার'], traf:'low', cnt:250, pop:true, fareRange:{min:800,max:1800}, express:true });
-  createRoute('r55', { name:'ঢাকা-রংপুর', from:'ঢাকা', to:'রংপুর', cat:'long_route', dist:350, time:480, stops:['ঢাকা','বগুড়া','রংপুর'], traf:'low', cnt:220, fareRange:{min:700,max:1500} });
-  createRoute('r56', { name:'গাজীপুর-নারায়ণগঞ্জ এক্সপ্রেস', from:'গাজীপুর', to:'নারায়ণগঞ্জ', cat:'intercity', dist:40, time:90, stops:['গাজীপুর','টঙ্গী','বিমানবন্দর','বনানী','যাত্রাবাড়ী','সাইনবোর্ড','নারায়ণগঞ্জ'], traf:'medium', cnt:180, express:true });
-  createRoute('r57', { name:'ঢাকা-সিরাজগঞ্জ', from:'ঢাকা', to:'সিরাজগঞ্জ', cat:'long_route', dist:150, time:240, stops:['ঢাকা','বগুড়া','সিরাজগঞ্জ'], traf:'low', cnt:150 });
-  createRoute('r58', { name:'উত্তরা-চট্টগ্রাম', from:'উত্তরা', to:'চট্টগ্রাম', cat:'intercity', dist:250, time:390, stops:['উত্তরা','ঢাকা','কুমিল্লা','ফেনী','চট্টগ্রাম'], traf:'low', cnt:200 });
-  createRoute('r59', { name:'নারায়ণগঞ্জ-চট্টগ্রাম', from:'নারায়ণগঞ্জ', to:'চট্টগ্রাম', cat:'intercity', dist:230, time:350, stops:['নারায়ণগঞ্জ','কুমিল্লা','ফেনী','চট্টগ্রাম'], traf:'low', cnt:170 });
-  createRoute('r60', { name:'মিরপুর-ময়মনসিংহ', from:'মিরপুর ১০', to:'ময়মনসিংহ', cat:'intercity', dist:130, time:200, stops:['মিরপুর ১০','উত্তরা','গাজীপুর','ময়মনসিংহ'], traf:'medium', cnt:160 });
-  createRoute('r61', { name:'সাভার-ময়মনসিংহ', from:'সাভার', to:'ময়মনসিংহ', cat:'intercity', dist:100, time:160, stops:['সাভার','গাজীপুর','ময়মনসিংহ'], traf:'medium', cnt:140 });
-  createRoute('r62', { name:'ঢাকা-কুমিল্লা', from:'ঢাকা', to:'কুমিল্লা', cat:'intercity', dist:100, time:150, stops:['ঢাকা','কুমিল্লা'], traf:'low', cnt:200 });
-  // ---- NARAYANGANJ DETAILED ROUTE ----
-  createRoute('r63', { name:'ঢাকা-নারায়ণগঞ্জ (চাষাড়া)', from:'গুলিস্তান', to:'নারায়ণগঞ্জ', cat:'dhaka_city', dist:25, time:45, stops:['গুলিস্তান','যাত্রাবাড়ী','সাইনবোর্ড','শনির আখড়া','মদনপুর','চাষাড়া','মন্ডলপাড়া','শিবুমার্কেট','জালকুড়ি'], traf:'medium', cnt:380, pop:true, fareRange:{min:30,max:70} });
-
-  // ---- DHAKA ROUTES FROM DATA FILE (63 routes) ----
+  // ---- DHAKA ROUTES FROM DATA FILE (53 routes) ----
   dhakaRoutesData.forEach((rd, idx) => {
     const fromStop = rd.stops[0].split(' (')[0];
     const toStop = rd.stops[rd.stops.length - 1].split(' (')[0];
@@ -339,129 +247,32 @@ function seedDatabase() {
       fareRange: { min: rd.fare.regular, max: rd.fare.ac }
     };
     db.routes.push(routeObj);
-    r['dhaka_' + idx] = routeObj;
-  });
 
-  // ========== BUSES (70+ real buses) ==========
-  const busesData = [
-    // Dhaka City buses
-    { n:'বিআরটিসি ডাবল ডেকার', op:0, t:'non_ac', rt:r.r1, f:10, c:70, dep:'০৬:০০', arr:'০৬:৩০', am:['ডাবল ডেকার','স্ট্যান্ডিং'] },
-    { n:'বিআরটিসি সিটি সার্ভিস', op:0, t:'non_ac', rt:r.r3, f:20, c:55, dep:'০৫:৩০', arr:'০৭:০০', am:['স্ট্যান্ডিং'] },
-    { n:'আজমেরী গ্লোরী ১', op:1, t:'non_ac', rt:r.r12, f:50, c:50, dep:'০৬:০০', arr:'০৭:৪৫', am:['বাতাস'] },
-    { n:'আজমেরী গ্লোরী ২', op:1, t:'ac', rt:r.r12, f:80, c:40, dep:'০৭:০০', arr:'০৮:৪০', am:['এসি','বাতাস'] },
-    { n:'গাজীপুর পরিবহন ১', op:2, t:'non_ac', rt:r.r15, f:45, c:50, dep:'০৬:৩০', arr:'০৭:৪০', am:[] },
-    { n:'গাজীপুর পরিবহন ২', op:2, t:'non_ac', rt:r.r18, f:60, c:48, dep:'০৬:০০', arr:'০৮:০০', am:[] },
-    { n:'স্কাইলাইন ১', op:3, t:'non_ac', rt:r.r11, f:40, c:50, dep:'০৬:১৫', arr:'০৭:৪৫', am:[] },
-    { n:'স্কাইলাইন ২', op:3, t:'ac', rt:r.r21, f:60, c:40, dep:'০৭:০০', arr:'০৮:৩০', am:['এসি'] },
-    { n:'ভিআইপি ২৭', op:4, t:'non_ac', rt:r.r4, f:30, c:50, dep:'০৬:০০', arr:'০৭:৩০', am:[] },
-    { n:'তুরাগ ১', op:5, t:'non_ac', rt:r.r20, f:35, c:50, dep:'০৬:০০', arr:'০৭:১৫', am:[] },
-    { n:'তুরাগ ২', op:5, t:'non_ac', rt:r.r31, f:30, c:48, dep:'০৬:৩০', arr:'০৭:৩০', am:[] },
-    { n:'আনাবিল ১', op:6, t:'non_ac', rt:r.r14, f:20, c:45, dep:'০৬:০০', arr:'০৬:৫০', am:[] },
-    { n:'আনাবিল ২', op:6, t:'non_ac', rt:r.r13, f:25, c:45, dep:'০৭:০০', arr:'০৮:০০', am:[] },
-    { n:'হিমাচল ১', op:7, t:'non_ac', rt:r.r5, f:25, c:50, dep:'০৭:০০', arr:'০৮:১৫', am:[] },
-    { n:'হিমাচল ২', op:7, t:'ac', rt:r.r22, f:45, c:38, dep:'০৭:৩০', arr:'০৮:৪৫', am:['এসি'] },
-    { n:'বাসুমতি ১', op:8, t:'non_ac', rt:r.r17, f:25, c:50, dep:'০৬:০০', arr:'০৭:০০', am:[] },
-    { n:'ভিক্টর ক্লাসিক', op:9, t:'non_ac', rt:r.r25, f:25, c:50, dep:'০৬:০০', arr:'০৭:১৫', am:[] },
-    { n:'গ্রামীণ পরিবহন', op:10, t:'non_ac', rt:r.r24, f:30, c:50, dep:'০৬:১৫', arr:'০৭:৩০', am:[] },
-    { n:'বন্ধন পরিবহন', op:11, t:'non_ac', rt:r.r6, f:35, c:50, dep:'০৫:৩০', arr:'০৮:০০', am:[] },
-    { n:'উৎসব পরিবহন', op:12, t:'non_ac', rt:r.r16, f:40, c:48, dep:'০৫:৩০', arr:'০৭:৩০', am:[] },
-    { n:'ডলনচাপা', op:13, t:'non_ac', rt:r.r11, f:45, c:50, dep:'০৬:০০', arr:'০৭:৩০', am:[] },
-    { n:'নারায়ণগঞ্জ পরিবহন ১', op:14, t:'non_ac', rt:r.r13, f:30, c:50, dep:'০৬:০০', arr:'০৭:১৫', am:[] },
-    { n:'নারায়ণগঞ্জ পরিবহন ২', op:14, t:'non_ac', rt:r.r14, f:20, c:48, dep:'০৭:০০', arr:'০৭:৪৫', am:[] },
-    { n:'নারায়ণগঞ্জ পরিবহন এসি', op:14, t:'ac', rt:r.r46, f:50, c:35, dep:'০৭:০০', arr:'০৮:০০', am:['এসি','বাতাস'] },
-    { n:'লাল-সবুজ পরিবহন', op:-1, t:'non_ac', rt:r.r1, f:10, c:45, dep:'০৬:০০', arr:'০৬:৪৫', am:[] },
-    { n:'বাংলা বাস', op:-1, t:'ac', rt:r.r1, f:20, c:30, dep:'০৭:০০', arr:'০৭:৪০', am:['এসি','মাইক্রো'] },
-    { n:'উত্তরা লিংক', op:-1, t:'ac', rt:r.r4, f:50, c:35, dep:'০৬:৩০', arr:'০৮:৩০', am:['এসি','বাসা দরজা'] },
-    { n:'রাজধানী এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r4, f:25, c:50, dep:'০৫:০০', arr:'০৭:০০', am:[] },
-    { n:'গুলশান শাটল', op:-1, t:'ac', rt:r.r5, f:45, c:30, dep:'০৭:০০', arr:'০৮:৩০', am:['এসি','ওয়াইফাই'] },
-    { n:'সাভার পরিবহন', op:-1, t:'non_ac', rt:r.r6, f:30, c:50, dep:'০৫:৩০', arr:'০৮:০০', am:[] },
-    { n:'ধানমন্ডি লাইনার', op:-1, t:'non_ac', rt:r.r7, f:15, c:45, dep:'০৬:০০', arr:'০৭:০০', am:[] },
-    { n:'যাত্রাবাড়ী এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r8, f:20, c:45, dep:'০৬:০০', arr:'০৭:৩০', am:[] },
-    { n:'রামপুরা শাটল', op:-1, t:'non_ac', rt:r.r9, f:15, c:40, dep:'০৬:০০', arr:'০৬:৪৫', am:[] },
-    { n:'শ্যামলী লিংক', op:-1, t:'non_ac', rt:r.r10, f:18, c:45, dep:'০৬:৩০', arr:'০৭:৪৫', am:[] },
-    { n:'বাড্ডা এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r10, f:20, c:48, dep:'০৭:০০', arr:'০৮:০০', am:[] },
-    { n:'মিরপুর লাইনার', op:-1, t:'non_ac', rt:r.r25, f:20, c:50, dep:'০৬:০০', arr:'০৭:১৫', am:[] },
-    { n:'মতিঝিল শাটল', op:-1, t:'non_ac', rt:r.r21, f:25, c:48, dep:'০৬:৩০', arr:'০৭:৪৫', am:[] },
-    { n:'মহাখালী লিংক', op:-1, t:'non_ac', rt:r.r15, f:40, c:50, dep:'০৭:০০', arr:'০৮:১৫', am:[] },
-    { n:'কেরানীগঞ্জ লাইনার', op:-1, t:'non_ac', rt:r.r19, f:25, c:45, dep:'০৬:০০', arr:'০৭:১৫', am:[] },
-    { n:'নিকুঞ্জ এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r38, f:25, c:45, dep:'০৬:৩০', arr:'০৭:৩০', am:[] },
-    { n:'কুড়িল শাটল', op:-1, t:'non_ac', rt:r.r34, f:20, c:45, dep:'০৬:৩০', arr:'০৭:১৫', am:[] },
-    { n:'গুলশান-সাভার লিংক', op:-1, t:'non_ac', rt:r.r41, f:30, c:50, dep:'০৬:৩০', arr:'০৭:৪৫', am:[] },
-    { n:'জাত্রাবাড়ী-মিরপুর সার্ভিস', op:-1, t:'non_ac', rt:r.r42, f:30, c:48, dep:'০৬:০০', arr:'০৭:৩০', am:[] },
-    { n:'বোর্ড বাজার এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r43, f:35, c:50, dep:'০৬:৩০', arr:'০৭:৪৫', am:[] },
-    { n:'টঙ্গী লিংক', op:-1, t:'non_ac', rt:r.r20, f:30, c:45, dep:'০৭:০০', arr:'০৮:১০', am:[] },
-    { n:'বিমানবন্দর লিংক', op:-1, t:'ac', rt:r.r20, f:50, c:35, dep:'০৭:০০', arr:'০৮:১০', am:['এসি'] },
-    { n:'সাইনবোর্ড এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r14, f:18, c:40, dep:'০৭:০০', arr:'০৭:৪৫', am:[] },
-    { n:'মোহাম্মদপুর লাইনার', op:-1, t:'non_ac', rt:r.r5, f:25, c:48, dep:'০৬:৩০', arr:'০৭:৩০', am:[] },
-    { n:'উত্তরা-নারায়ণগঞ্জ এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r27, f:55, c:50, dep:'০৬:০০', arr:'০৮:০০', am:[] },
-    { n:'সাভার লোকাল', op:-1, t:'non_ac', rt:r.r35, f:15, c:45, dep:'০৬:৩০', arr:'০৭:০০', am:[] },
-    { n:'মানিকগঞ্জ এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r39, f:60, c:50, dep:'০৬:০০', arr:'০৭:৩০', am:[] },
-    { n:'মিরপুর-বাড্ডা সার্ভিস', op:-1, t:'non_ac', rt:r.r36, f:25, c:48, dep:'০৬:৩০', arr:'০৭:৩০', am:[] },
-    { n:'গাজীপুর-মিরপুর লিংক', op:-1, t:'non_ac', rt:r.r30, f:40, c:50, dep:'০৬:০০', arr:'০৭:৩০', am:[] },
-    { n:'ডেমরা লাইনার', op:-1, t:'non_ac', rt:r.r33, f:45, c:45, dep:'০৫:৩০', arr:'০৭:৩০', am:[] },
-    { n:'সাইনবোর্ড-মিরপুর লিংক', op:-1, t:'non_ac', rt:r.r45, f:35, c:48, dep:'০৬:০০', arr:'০৭:৩০', am:[] },
-
-    // Intercity / Long route buses
-    { n:'গ্রীন লাইন এসি', op:15, t:'ac', rt:r.r47, f:950, c:40, dep:'০৭:০০', arr:'১৩:০০', am:['এসি','ওয়াইফাই','ফুড','ব্লাঙ্কেট'] },
-    { n:'গ্রীন লাইন স্লিপার', op:15, t:'sleeper', rt:r.r47, f:1200, c:36, dep:'২২:০০', arr:'০৪:০০', am:['এসি','স্লিপার','ওয়াইফাই','ফুড'] },
-    { n:'হানিফ এন্টারপ্রাইজ', op:16, t:'non_ac', rt:r.r47, f:550, c:50, dep:'০৬:০০', arr:'১৩:০০', am:['ওয়াটার'] },
-    { n:'হানিফ এসি', op:16, t:'ac', rt:r.r48, f:1000, c:40, dep:'২১:০০', arr:'০৪:০০', am:['এসি','ওয়াইফাই'] },
-    { n:'সৌদিয়া এক্সপ্রেস', op:17, t:'sleeper', rt:r.r47, f:1100, c:36, dep:'২২:০০', arr:'০৪:০০', am:['এসি','স্লিপার'] },
-    { n:'সিলেট এক্সপ্রেস', op:-1, t:'ac', rt:r.r48, f:1200, c:38, dep:'২১:০০', arr:'০৪:০০', am:['এসি','স্লিপার','ওয়াইফাই'] },
-    { n:'শ্যামলী পরিবহন', op:20, t:'non_ac', rt:r.r48, f:650, c:50, dep:'০৭:০০', arr:'১৪:০০', am:[] },
-    { n:'শ্যামলী এসি', op:20, t:'ac', rt:r.r49, f:1100, c:40, dep:'২০:০০', arr:'০৫:০০', am:['এসি','স্লিপার'] },
-    { n:'নাবিল এসি', op:18, t:'ac', rt:r.r54, f:1500, c:38, dep:'০৭:০০', arr:'১৮:০০', am:['এসি','ফুড','ওয়াইফাই'] },
-    { n:'নাবিল স্লিপার', op:18, t:'sleeper', rt:r.r54, f:1800, c:34, dep:'২০:০০', arr:'০৬:০০', am:['এসি','স্লিপার','ব্লাঙ্কেট'] },
-    { n:'সেন্ট মার্টিন এসি', op:19, t:'ac', rt:r.r54, f:1400, c:40, dep:'০৭:০০', arr:'১৭:০০', am:['এসি','ফুড'] },
-    { n:'সেন্ট মার্টিন স্লিপার', op:19, t:'sleeper', rt:r.r54, f:1700, c:36, dep:'২১:০০', arr:'০৬:০০', am:['এসি','স্লিপার'] },
-    { n:'এনা ট্রান্সপোর্ট', op:21, t:'non_ac', rt:r.r50, f:500, c:50, dep:'০৬:০০', arr:'১৪:০০', am:[] },
-    { n:'এনা এসি', op:21, t:'ac', rt:r.r50, f:800, c:40, dep:'২১:০০', arr:'০৪:০০', am:['এসি','স্লিপার'] },
-    { n:'কেয়া পরিবহন', op:22, t:'non_ac', rt:r.r49, f:700, c:50, dep:'০৬:০০', arr:'১৫:০০', am:[] },
-    { n:'এ আর ট্রাভেলস', op:23, t:'ac', rt:r.r55, f:1200, c:40, dep:'২০:০০', arr:'০৫:০০', am:['এসি','স্লিপার'] },
-    { n:'সোহাগ পরিবহন', op:24, t:'ac', rt:r.r52, f:450, c:42, dep:'০৭:০০', arr:'১০:৩০', am:['এসি'] },
-    { n:'সোহাগ নন এসি', op:24, t:'non_ac', rt:r.r52, f:250, c:50, dep:'০৬:৩০', arr:'১০:০০', am:[] },
-    { n:'রাজশাহী এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r50, f:550, c:50, dep:'০৬:০০', arr:'১৩:০০', am:[] },
-    { n:'খুলনা লাইনার', op:-1, t:'non_ac', rt:r.r49, f:650, c:50, dep:'০৬:০০', arr:'১৪:০০', am:[] },
-    { n:'বরিশাল এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r51, f:600, c:50, dep:'০৬:০০', arr:'১৪:০০', am:[] },
-    { n:'বরিশাল এসি', op:-1, t:'ac', rt:r.r51, f:1000, c:40, dep:'২১:৩০', arr:'০৫:০০', am:['এসি','স্লিপার'] },
-    { n:'রংপুর এক্সপ্রেস', op:-1, t:'non_ac', rt:r.r55, f:750, c:50, dep:'০৬:০০', arr:'১৫:০০', am:[] },
-    { n:'ময়মনসিংহ পরিবহন', op:-1, t:'non_ac', rt:r.r52, f:300, c:50, dep:'০৭:০০', arr:'১১:০০', am:[] },
-    { n:'কুমিল্লা লাইনার', op:-1, t:'non_ac', rt:r.r62, f:250, c:50, dep:'০৬:৩০', arr:'০৯:৩০', am:[] },
-    { n:'বেনাপোল এসি', op:-1, t:'ac', rt:r.r53, f:1200, c:40, dep:'২০:০০', arr:'০৫:০০', am:['এসি','স্লিপার'] },
-    { n:'সিরাজগঞ্জ লাইনার', op:-1, t:'non_ac', rt:r.r57, f:350, c:50, dep:'০৬:০০', arr:'১০:৩০', am:[] },
-
-    // ---- Narayanganj Route Buses ----
-    { n:'বিআরটিসি নারায়ণগঞ্জ', op:0, t:'ac', rt:r.r63, f:50, c:45, dep:'০৬:৩০', arr:'০৭:৩০', am:['এসি'] },
-    { n:'হিমাচল নারায়ণগঞ্জ', op:7, t:'non_ac', rt:r.r63, f:50, c:50, dep:'০৭:১০', arr:'০৮:১০', am:[] },
-    { n:'শীতল পরিবহন', op:25, t:'non_ac', rt:r.r63, f:55, c:48, dep:'০৭:৩০', arr:'০৮:৩০', am:[] },
-    { n:'বাঁধন পরিবহন', op:26, t:'non_ac', rt:r.r63, f:50, c:45, dep:'০৬:০০', arr:'০৭:০০', am:[] },
-    { n:'একতা পরিবহন', op:27, t:'non_ac', rt:r.r63, f:50, c:45, dep:'০৬:১৫', arr:'০৭:১৫', am:[] },
-    { n:'উল্লাস পরিবহন', op:28, t:'non_ac', rt:r.r63, f:50, c:45, dep:'০৬:৩০', arr:'০৭:৩০', am:[] },
-    { n:'উৎসব পরিবহন', op:29, t:'non_ac', rt:r.r63, f:55, c:48, dep:'০৭:০০', arr:'০৮:০০', am:[] },
-    { n:'বন্ধন পরিবহন', op:30, t:'non_ac', rt:r.r63, f:55, c:48, dep:'০৬:৪৫', arr:'০৭:৪৫', am:[] },
-    { n:'স্বদেশ পরিবহন', op:31, t:'non_ac', rt:r.r63, f:55, c:45, dep:'০৬:০০', arr:'০৭:০০', am:[] },
-    { n:'দোয়েল পরিবহন', op:32, t:'non_ac', rt:r.r63, f:55, c:45, dep:'০৬:৩০', arr:'০৭:৩০', am:[] },
-    { n:'আসিয়ান পরিবহন', op:33, t:'non_ac', rt:r.r63, f:50, c:45, dep:'০৭:০০', arr:'০৮:০০', am:[] },
-    { n:'আনন্দ পরিবহন', op:34, t:'non_ac', rt:r.r63, f:50, c:45, dep:'০৬:৩০', arr:'০৭:৩০', am:[] },
-    { n:'সেতু পরিবহন', op:35, t:'non_ac', rt:r.r63, f:55, c:48, dep:'০৭:১৫', arr:'০৮:১৫', am:[] },
-    { n:'বোরাক পরিবহন', op:36, t:'non_ac', rt:r.r63, f:55, c:48, dep:'০৬:৪৫', arr:'০৭:৪৫', am:[] },
-    { n:'প্রভাতী বনশ্রী', op:37, t:'non_ac', rt:r.r63, f:50, c:50, dep:'০৭:৩০', arr:'০৮:৩০', am:[] },
-  ];
-
-  busesData.forEach(b => {
-    const operatorId = b.op >= 0 ? operators[b.op]._id : null;
-    const bus = {
-      _id: id(), name: b.n, operator: operatorId, type: b.t, route: b.rt._id,
-      fare: b.f, seatCapacity: b.c, departureTime: b.dep, arrivalTime: b.arr,
-      amenities: b.am, image: '', isActive: true, createdAt: new Date()
-    };
-    db.buses.push(bus);
-    b.rt.buses.push(bus._id);
+    // Auto-generate buses from route data
+    rd.buses.forEach(busName => {
+      const bus = {
+        _id: id(),
+        name: busName,
+        operator: null,
+        type: 'non_ac',
+        route: routeObj._id,
+        fare: rd.fare.regular,
+        seatCapacity: 50,
+        departureTime: '০৬:০০',
+        arrivalTime: '০৮:০০',
+        amenities: [],
+        image: '',
+        isActive: true,
+        createdAt: new Date()
+      };
+      db.buses.push(bus);
+      routeObj.buses.push(bus._id);
+    });
   });
 
   // ========== ANNOUNCEMENTS ==========
   db.announcements.push(
-    { _id: id(), title: '🚌 গন্তব্য BD তে স্বাগতম!', message: '৬২টি রুট ও ৭০+ বাস নিয়ে বাংলাদেশের সব বাস তথ্য এখন আপনার হাতের মুঠোয়।', type: 'general', isActive: true, createdAt: new Date() },
+    { _id: id(), title: '🚌 গন্তব্য BD তে স্বাগতম!', message: '৫৩টি রুট ও ৫৩+ বাস নিয়ে বাংলাদেশের সব বাস তথ্য এখন আপনার হাতের মুঠোয়।', type: 'general', isActive: true, createdAt: new Date() },
     { _id: id(), title: '🚦 ট্রাফিক: ফার্মগেট-গুলশান', message: 'ফার্মগেট ও গুলশান এলাকায় তীব্র যানজট। নারায়ণগঞ্জ রুটে বিকল্প পথ ব্যবহার করুন।', type: 'traffic', isActive: true, createdAt: new Date() },
     { _id: id(), title: '🚦 ট্রাফিক: যাত্রাবাড়ী', message: 'যাত্রাবাড়ী এলাকায় সাইনবোর্ড পর্যন্ত মাঝারি যানজট। বিকাল ৪-৮টা পিক আওয়ার।', type: 'traffic', isActive: true, createdAt: new Date() },
     { _id: id(), title: '🚦 ট্রাফিক: কুড়িল', message: 'কুড়িল ফ্লাইওভার এলাকায় যানজট। বিকল্প রুট ব্যবহার করুন।', type: 'traffic', isActive: true, createdAt: new Date() },
