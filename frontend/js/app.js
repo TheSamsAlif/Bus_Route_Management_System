@@ -252,6 +252,7 @@ function showLanding() {
       <div class="ambient-glow glow-2"></div>
       <div class="ambient-glow glow-3"></div>
       <div class="ambient-glow glow-4"></div>
+      <div class="ambient-glow glow-5"></div>
     </div>
 
     <!-- Portal Navigation Bar -->
@@ -270,6 +271,7 @@ function showLanding() {
         <button class="landing-nav-link" onclick="showPage('buses')"><i class="fas fa-bus"></i> সকল বাস (${buses.length||'৭৭৯+'})</button>
       </nav>
       <div class="landing-nav-actions">
+        <button class="nav-btn-portal demo-btn" onclick="directDemoLogin('user')" style="background:linear-gradient(135deg,rgba(0,242,254,0.18),rgba(127,0,255,0.25));border:1.5px solid #00F2FE;color:#00F2FE"><i class="fas fa-bolt"></i> যাত্রী ডেমো</button>
         <button class="nav-btn-portal login" onclick="showAuth()"><i class="fas fa-sign-in-alt"></i> লগইন / অ্যাকাউন্ট</button>
       </div>
     </header>
@@ -294,8 +296,8 @@ function showLanding() {
       <div class="landing-quick-demo-strip">
         <div class="demo-strip-label"><i class="fas fa-bolt" style="color:#00F2FE"></i> ১-ক্লিক ইনস্ট্যান্ট ডেমো লগইন:</div>
         <div class="demo-strip-btns">
-          <button class="quick-pill-btn user" onclick="directDemoLogin('user')"><i class="fas fa-user-check"></i> ইউজার ডেমো (user)</button>
-          <button class="quick-pill-btn admin" onclick="directDemoLogin('admin')"><i class="fas fa-crown"></i> অ্যাডমিন ডেমো (admin)</button>
+          <button class="quick-pill-btn user" onclick="directDemoLogin('user')"><i class="fas fa-user-check"></i> সাধারণ যাত্রী ডেমো (user / user123)</button>
+          <button class="quick-pill-btn admin" onclick="directDemoLogin('admin')"><i class="fas fa-crown"></i> অ্যাডমিন ডেমো (admin / admin123)</button>
         </div>
       </div>
 
@@ -426,6 +428,37 @@ function showLanding() {
           <div style="margin-top:14px;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:11px;color:#8c96ac">
             * বিআরটিএ কর্তৃক অনুমোদিত ভাড়া নির্দেশিকা অনুযায়ী হালনাগাদকৃত।
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4K Animated Glass Features Showcase Section -->
+    <section style="max-width:1120px;margin:30px auto;text-align:center">
+      <div class="portal-section-header" style="margin-bottom:18px">
+        <span class="section-tag">PREMIUM TRANSIT FEATURES</span>
+        <h2>কেন গন্তব্য BD ব্যবহার করবেন?</h2>
+        <p>বাংলাদেশের যাত্রী ও শিক্ষার্থীদের জন্য আধুনিক ৪কে অ্যানিমেটেড গ্লাস ইন্টারফেস ও স্মার্ট ট্রানজিট অভিজ্ঞতা</p>
+      </div>
+      <div class="portal-feature-grid">
+        <div class="portal-feature-card" style="--feat-grad:linear-gradient(90deg,#00F2FE,#4FACFE);--feat-bg:rgba(0,242,254,0.15);--feat-color:#00F2FE;--feat-border:rgba(0,242,254,0.3);--feat-glow:rgba(0,242,254,0.25)">
+          <div class="feature-icon-box"><i class="fas fa-map-marked-alt"></i></div>
+          <h3>১৫৪+ রুট ও ৮০০+ বাস</h3>
+          <p>ঢাকা সিটির অভ্যন্তরীণ ও ৬৪ জেলার আন্তঃজেলা দূরপাল্লার এসি/নন-এসি বাসের সঠিক স্টপেজ ও রুট ডিরেক্টরি।</p>
+        </div>
+        <div class="portal-feature-card" style="--feat-grad:linear-gradient(90deg,#00F5A0,#00cec9);--feat-bg:rgba(0,245,160,0.15);--feat-color:#00F5A0;--feat-border:rgba(0,245,160,0.3);--feat-glow:rgba(0,245,160,0.25)">
+          <div class="feature-icon-box"><i class="fas fa-graduation-cap"></i></div>
+          <h3>বিআরটিএ ৫০% হাফ পাস</h3>
+          <p>সরকারি গেজেট অনুযায়ী অনুমোদিত শিক্ষার্থী ৫০% হাফ পাস ভাড়া তালিকা ও ডিজিটাল আইডি ভেরিফিকেশন।</p>
+        </div>
+        <div class="portal-feature-card" style="--feat-grad:linear-gradient(90deg,#A855F7,#7F00FF);--feat-bg:rgba(168,85,247,0.15);--feat-color:#A855F7;--feat-border:rgba(168,85,247,0.3);--feat-glow:rgba(168,85,247,0.25)">
+          <div class="feature-icon-box"><i class="fas fa-random"></i></div>
+          <h3>স্মার্ট ট্রানজিট সংযোগ</h3>
+          <p>সরাসরি বাস না থাকলে কোথায় ইন্টারচেঞ্জ করবেন ও পরবর্তী বাস পেতে কতদূর যেতে হবে তার সঠিক গাইড।</p>
+        </div>
+        <div class="portal-feature-card" style="--feat-grad:linear-gradient(90deg,#FF758C,#FF0844);--feat-bg:rgba(255,117,140,0.15);--feat-color:#FF758C;--feat-border:rgba(255,117,140,0.3);--feat-glow:rgba(255,8,68,0.25)">
+          <div class="feature-icon-box"><i class="fas fa-shield-alt"></i></div>
+          <h3>জরুরি নিরাপত্তা ও হেল্পলাইন</h3>
+          <p>জাতীয় জরুরি সেবা ৯৯৯, বিআরটিএ অতিরিক্ত ভাড়া হটলাইন ১৬১০৭ ও নারী নিরাপত্তা ডিরেক্টরি।</p>
         </div>
       </div>
     </section>
@@ -866,6 +899,109 @@ function showDashboard() {
       </div>
     </div>
 
+    <!-- 2. FEATURE: Live Bus Arrival Radar Simulator -->
+    <div class="radar-section-box">
+      <div class="radar-header">
+        <h3 style="font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px">
+          <i class="fas fa-satellite-dish" style="color:#00F2FE"></i> লাইভ বাস আগমন রাডার ও ট্র্যাকার
+        </h3>
+        <span class="radar-live-badge"><span class="radar-pulse-dot"></span> লাইভ ট্র্যাকিং</span>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:12px;color:#9ba4b8;display:block;margin-bottom:6px">আপনার বর্তমান স্টপেজ নির্বাচন করুন:</label>
+        <select class="panel-select" style="margin-bottom:0" onchange="changeRadarStop(this.value)">
+          <option value="মিরপুর ১০">মিরপুর ১০ (গোলচত্বর ট্রানজিট)</option>
+          <option value="ফার্মগেট">ফার্মগেট (আনন্দ সিনেমা হল সংলগ্ন)</option>
+          <option value="মতিঝিল">মতিঝিল (শাপলা চত্বর)</option>
+          <option value="উত্তরা">উত্তরা (আজমপুর / রাজলক্ষ্মী)</option>
+        </select>
+      </div>
+      <div class="radar-bus-list" id="radar-bus-container">
+        <div class="radar-bus-card">
+          <div class="radar-bus-info">
+            <h4><i class="fas fa-bus" style="color:#00F2FE"></i> বিহঙ্গ পরিবহন</h4>
+            <p>মিরপুর ১০ → আজিমপুর • গতি: ৩৫ কি.মি/ঘণ্টা</p>
+          </div>
+          <div class="radar-bus-eta">
+            <div class="radar-eta-time">৩ মিনিট পর</div>
+            <span class="radar-eta-seat green">১২টি সিট ফাঁকা</span>
+          </div>
+        </div>
+        <div class="radar-bus-card">
+          <div class="radar-bus-info">
+            <h4><i class="fas fa-bus" style="color:#00F2FE"></i> শিকড় পরিবহন</h4>
+            <p>মিরপুর ১০ → মতিঝিল • গতি: ৩০ কি.মি/ঘণ্টা</p>
+          </div>
+          <div class="radar-bus-eta">
+            <div class="radar-eta-time">৬ মিনিট পর</div>
+            <span class="radar-eta-seat yellow">৬টি সিট ফাঁকা</span>
+          </div>
+        </div>
+        <div class="radar-bus-card">
+          <div class="radar-bus-info">
+            <h4><i class="fas fa-bus" style="color:#00F2FE"></i> বিকল্প অটো সার্ভিস</h4>
+            <p>মিরপুর ১০ → মতিঝিল • গতি: ৩২ কি.মি/ঘণ্টা</p>
+          </div>
+          <div class="radar-bus-eta">
+            <div class="radar-eta-time">১০ মিনিট পর</div>
+            <span class="radar-eta-seat green">১৮টি সিট ফাঁকা</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. FEATURE: Saved Daily Commutes & 1-Click Fare Checker -->
+    <div class="panel-glass commute-section-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin-bottom:0;font-size:15px"><i class="fas fa-map-marked-alt" style="color:#A855F7"></i> আমার নিয়মিত যাতায়াত (Daily Commutes)</h3>
+        <span style="font-size:11px;color:#A855F7;font-weight:700">১-ক্লিক হিসেব</span>
+      </div>
+      <div class="commute-card" onclick="setLandingSearch('মিরপুর ১০','মতিঝিল');showPage('home')">
+        <div>
+          <div style="font-weight:700;font-size:13px;color:#fff"><i class="fas fa-home" style="color:#00F2FE"></i> বাসা ⇄ <i class="fas fa-briefcase" style="color:#A855F7"></i> অফিস/ভার্সিটি</div>
+          <div style="font-size:12px;color:#9ba4b8;margin-top:2px">মিরপুর ১০ ⇄ মতিঝিল (দূরত্ব: ১৫ কি.মি)</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:800;font-size:14px;color:#00F5A0">ভাড়া: ৳৩৭</div>
+          <div style="font-size:10px;color:#00F2FE;font-weight:700">হাফ পাস: ৳১৯</div>
+        </div>
+      </div>
+      <div class="commute-card" onclick="setLandingSearch('উত্তরা','ফার্মগেট');showPage('home')">
+        <div>
+          <div style="font-weight:700;font-size:13px;color:#fff"><i class="fas fa-home" style="color:#00F2FE"></i> বাসা ⇄ <i class="fas fa-graduation-cap" style="color:#FF758C"></i> কলেজ/ভার্সিটি</div>
+          <div style="font-size:12px;color:#9ba4b8;margin-top:2px">উত্তরা ⇄ ফার্মগেট (দূরত্ব: ১৮ কি.মি)</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:800;font-size:14px;color:#00F5A0">ভাড়া: ৳৪৪</div>
+          <div style="font-size:10px;color:#00F2FE;font-weight:700">হাফ পাস: ৳২২</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. FEATURE: Monthly Transit Expense & Student Savings Tracker -->
+    <div class="savings-section-box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h4 style="font-size:14px;font-weight:700;color:#fff;margin-bottom:0">
+          <i class="fas fa-wallet" style="color:#00F5A0"></i> এই মাসের বাস খরচ ও হাফ পাস সাশ্রয়
+        </h4>
+        <span style="font-size:11px;font-weight:700;color:#00F5A0;background:rgba(0,245,160,0.15);padding:3px 8px;border-radius:8px">সক্রিয়</span>
+      </div>
+      <div class="savings-grid">
+        <div class="savings-item">
+          <div class="savings-val">৩২টি</div>
+          <div class="savings-lbl">মোট ট্রিপ</div>
+        </div>
+        <div class="savings-item">
+          <div class="savings-val" style="color:#f59e0b">৳১,৯২০</div>
+          <div class="savings-lbl">সাধারণ ভাড়া</div>
+        </div>
+        <div class="savings-item">
+          <div class="savings-val" style="color:#00F2FE">৳৯৬০</div>
+          <div class="savings-lbl">হাফ পাসে সেভ 🎉</div>
+        </div>
+      </div>
+    </div>
+
     <!-- 2. FEATURE: Emergency Transit Helpline Grid -->
     <div class="panel-glass helpline-section-box">
       <h3><i class="fas fa-phone-volume" style="color:#eb4d4b"></i> জরুরি ট্রানজিট ও যাত্রী সহায়তা হটলাইন</h3>
@@ -910,6 +1046,11 @@ function showDashboard() {
           </div>
           <span class="helpline-number">১০৯</span>
         </a>
+      </div>
+      <div style="margin-top:14px">
+        <button onclick="triggerEmergencySos()" style="width:100%;padding:12px;border:none;border-radius:14px;background:linear-gradient(135deg,#eb4d4b,#c0392b);color:#fff;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit">
+          <i class="fas fa-exclamation-triangle"></i> 🚨 জরুরি এসওএস (SOS) নিরাপত্তা হেল্পলাইন চালু করুন
+        </button>
       </div>
     </div>
 
@@ -1058,6 +1199,72 @@ window.showStudentPassModal = function() {
     </button>
   </div>`;
   showModal(passHtml);
+};
+
+window.changeRadarStop = function(stop) {
+  const container = $('radar-bus-container');
+  if (!container) return;
+  const sampleData = {
+    'মিরপুর ১০': [
+      { name: 'বিহঙ্গ পরিবহন', route: 'মিরপুর ১০ → আজিমপুর', time: '৩ মিনিট', speed: '৩৫ কি.মি/ঘণ্টা', seat: '১২টি ফাঁকা', status: 'green' },
+      { name: 'শিকড় পরিবহন', route: 'মিরপুর ১০ → মতিঝিল', time: '৬ মিনিট', speed: '৩০ কি.মি/ঘণ্টা', seat: '৬টি ফাঁকা', status: 'yellow' },
+      { name: 'বিকল্প অটো সার্ভিস', route: 'মিরপুর ১০ → মতিঝিল', time: '১০ মিনিট', speed: '৩২ কি.মি/ঘণ্টা', seat: '১৮টি ফাঁকা', status: 'green' },
+      { name: 'মিরপুর সুপার লিংক', route: 'মিরপুর ১০ → সদরঘাট', time: '১৪ মিনিট', speed: '২৮ কি.মি/ঘণ্টা', seat: 'আসন পূর্ণ', status: 'red' }
+    ],
+    'ফার্মগেট': [
+      { name: 'বিকাশ পরিবহন', route: 'আজিমপুর → গাজীপুর', time: '২ মিনিট', speed: '৪০ কি.মি/ঘণ্টা', seat: '১৫টি ফাঁকা', status: 'green' },
+      { name: 'তুরাগ এক্সপ্রেস', route: 'যাত্রাবাড়ী → টঙ্গী', time: '৫ মিনিট', speed: '২৭ কি.মি/ঘণ্টা', speed_raw: 27, seat: '৮টি ফাঁকা', status: 'yellow' },
+      { name: 'লাব্বাইক পরিবহন', route: 'সাভার → গুলিস্তান', time: '৯ মিনিট', speed: '৩৩ কি.মি/ঘণ্টা', seat: 'আসন পূর্ণ', status: 'red' }
+    ],
+    'মতিঝিল': [
+      { name: 'প্রজাপতি পরিবহন', route: 'মোহাম্মদপুর → মতিঝিল', time: '৪ মিনিট', speed: '২৫ কি.মি/ঘণ্টা', seat: '১০টি ফাঁকা', status: 'green' },
+      { name: 'দেওয়ান পরিবহন', route: 'গাবতলী → মতিঝিল', time: '৭ মিনিট', speed: '৩০ কি.মি/ঘণ্টা', seat: '৫টি ফাঁকা', status: 'yellow' },
+      { name: 'স্বাধীন এক্সপ্রেস', route: 'মিরপুর ১২ → মতিঝিল', time: '১২ মিনিট', speed: '৩৫ কি.মি/ঘণ্টা', seat: '২০টি ফাঁকা', status: 'green' }
+    ],
+    'উত্তরা': [
+      { name: 'আজমিরী গ্লোরী', route: 'চন্দ্রা → সায়েদাবাদ', time: '৩ মিনিট', speed: '৪৫ কি.মি/ঘণ্টা', seat: '১৪টি ফাঁকা', status: 'green' },
+      { name: 'এনা ট্রান্সপোর্ট', route: 'মহাখালী → ময়মনসিংহ', time: '৮ মিনিট', speed: '৪৮ কি.মি/ঘণ্টা', seat: '২২টি ফাঁকা', status: 'green' },
+      { name: 'গাজীপুর পরিবহন', route: 'গাজীপুর → গুলিস্তান', time: '১১ মিনিট', speed: '৩৬ কি.মি/ঘণ্টা', seat: '৭টি ফাঁকা', status: 'yellow' }
+    ]
+  };
+  const list = sampleData[stop] || sampleData['মিরপুর ১০'];
+  container.innerHTML = list.map(b => `
+    <div class="radar-bus-card">
+      <div class="radar-bus-info">
+        <h4><i class="fas fa-bus" style="color:#00F2FE"></i> ${b.name}</h4>
+        <p>${b.route} • গতি: ${b.speed}</p>
+      </div>
+      <div class="radar-bus-eta">
+        <div class="radar-eta-time">${b.time} পর</div>
+        <span class="radar-eta-seat ${b.status}">${b.seat}</span>
+      </div>
+    </div>
+  `).join('');
+};
+
+window.triggerEmergencySos = function() {
+  showModal(`
+    <div class="detail-card" style="text-align:center;padding:24px 20px;border-radius:24px;border:2px solid #eb4d4b;background:linear-gradient(135deg,rgba(40,10,20,0.95),rgba(20,8,15,0.95))">
+      <div style="width:70px;height:70px;border-radius:50%;background:rgba(235,77,75,0.2);color:#eb4d4b;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 14px;border:2px solid #eb4d4b;animation:radarPulse 1.5s infinite">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h2 style="font-size:22px;color:#fff;margin-bottom:6px">জরুরি এসওএস (SOS) নিরাপত্তা হেল্প</h2>
+      <p style="font-size:13px;color:#cbd5e1;margin-bottom:20px;line-height:1.6">
+        আপনি কি বাসে বা ট্রানজিটে কোনো জরুরি বিপদ, ছিনতাই বা হয়রানির শিকার? নিচে সরাসরি জাতীয় নিরাপত্তা নম্বরে ফোন দিন:
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        <a href="tel:999" style="padding:14px;border-radius:14px;background:#eb4d4b;color:#fff;text-decoration:none;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px">
+          <i class="fas fa-phone-alt"></i> ৯৯৯ পুলিশ / অ্যাম্বুলেন্স (সরাসরি কল)
+        </a>
+        <a href="tel:109" style="padding:12px;border-radius:14px;background:rgba(253,121,168,0.2);border:1px solid #fd79a8;color:#fd79a8;text-decoration:none;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:10px">
+          <i class="fas fa-female"></i> ১০৯ নারী ও শিশু সহায়তা সেল
+        </a>
+      </div>
+      <button onclick="el.modal.classList.remove('active')" style="width:100%;padding:12px;border:none;border-radius:12px;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;font-family:inherit">
+        বাতিল করুন
+      </button>
+    </div>
+  `);
 };
 
 
