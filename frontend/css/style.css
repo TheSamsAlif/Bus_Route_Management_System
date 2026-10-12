@@ -2437,3 +2437,85 @@ body.light-mode .radar-bus-info h4 { color: #1a1a2e; }
   margin-top: 2px;
 }
 
+/* Regular Commuter Transit Pass Card */
+.regular-pass-card {
+  background: linear-gradient(135deg, rgba(20, 28, 48, 0.95), rgba(15, 23, 42, 0.9));
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(25px);
+}
+.pass-seal.regular {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #0a0a1a;
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+}
+
+/* Upgrade to Student Pass Card */
+.upgrade-student-card {
+  background: linear-gradient(135deg, rgba(127, 0, 255, 0.12), rgba(0, 242, 254, 0.08));
+  border: 1.5px dashed rgba(0, 242, 254, 0.4);
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 20px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+.upgrade-student-card:hover {
+  border-color: #00F2FE;
+  box-shadow: 0 15px 40px rgba(0, 242, 254, 0.15);
+}
+.upgrade-student-card h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.upgrade-student-card p {
+  font-size: 12.5px;
+  color: #9ba4b8;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+/* Document Badge in Profile */
+.doc-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(0, 245, 160, 0.12);
+  border: 1px solid rgba(0, 245, 160, 0.3);
+  color: #00F5A0;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.doc-view-btn {
+  background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  color: #00F2FE;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.doc-view-btn:hover {
+  background: #00F2FE;
+  color: #0a0a1a;
+}
+
+

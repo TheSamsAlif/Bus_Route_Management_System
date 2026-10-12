@@ -79,33 +79,147 @@ function bindOnline() {
 function bindAuth() {
   el.userBtn?.addEventListener('click', () => user ? showPage('profile') : showAuth());
   el.aclose?.addEventListener('click', () => el.auth.classList.remove('active'));
+  
   el.atabs?.forEach(t => t.addEventListener('click', () => {
     el.atabs.forEach(x => x.classList.remove('active'));
     t.classList.add('active');
-    if (el.nameFg) el.nameFg.style.display = t.dataset.tab === 'register' ? 'block' : 'none';
+    const isReg = t.dataset.tab === 'register';
+    if (el.nameFg) el.nameFg.style.display = isReg ? 'block' : 'none';
+    
+    // Toggle student section in register tab
+    const sToggleWrap = qs('.auth-student-toggle');
+    if (sToggleWrap) sToggleWrap.style.display = isReg ? 'block' : 'none';
+    const sCheck = $('reg-student-check');
+    const sBox = $('student-reg-box');
+    if (sBox) sBox.style.display = (isReg && sCheck && sCheck.checked) ? 'block' : 'none';
+
     const btn = el.aform?.querySelector('button span');
-    if (btn) btn.textContent = t.dataset.tab === 'register' ? 'রেজিস্টার' : 'লগিন';
+    if (btn) btn.textContent = isReg ? 'রেজিস্টার' : 'লগিন';
   }));
+
+  // Student checkbox toggle
+  const sCheck = $('reg-student-check');
+  sCheck?.addEventListener('change', (e) => {
+    const sBox = $('student-reg-box');
+    if (sBox) sBox.style.display = e.target.checked ? 'block' : 'none';
+  });
+
+  // Student document file upload listener
+  const sDoc = $('reg-student-doc');
+  sDoc?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    const preview = $('doc-preview-name');
+    if (preview) {
+      if (file) {
+        preview.textContent = `✓ ${file.name} (${Math.round(file.size/1024)} KB)`;
+        preview.style.display = 'inline-block';
+      } else {
+        preview.textContent = '';
+        preview.style.display = 'none';
+      }
+    }
+  });
+
   el.aform?.addEventListener('submit', async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const isReg = el.atabs && el.atabs[1]?.classList.contains('active');
-    const body = isReg
-      ? { username: fd.get('username'), name: fd.get('name')||fd.get('username'), password: fd.get('password') }
-      : { username: fd.get('username'), password: fd.get('password') };
-    try {
-      const r = await fetch(`${API}/auth/${isReg?'register':'login'}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-      const d = await r.json();
-      if (d.success) {
-        localStorage.setItem('gbd_token', d.token);
-        user = d.user; favs = d.user.favorites || [];
-        updateUI();
-        el.auth.classList.remove('active');
-        el.aform.reset();
-        showPage('home');
-        showToast(isReg ? 'রেজিস্ট্রেশন সফল! স্বাগতম!' : 'লগিন সফল!', 'success');
-      } else showToast(d.message || 'ত্রুটি হয়েছে', 'error');
-    } catch(e) { showToast('কানেকশন ত্রুটি — সার্ভার চালু আছে কি?', 'error'); }
+    
+    if (isReg) {
+      const isStudent = $('reg-student-check')?.checked || false;
+      const institution = $('reg-institution')?.value?.trim() || '';
+      const studentId = $('reg-student-id')?.value?.trim() || '';
+      const department = $('reg-department')?.value?.trim() || '';
+      const docFile = $('reg-student-doc')?.files[0];
+      
+      let documentName = '';
+      let documentData = '';
+
+      if (docFile) {
+        documentName = docFile.name;
+        try {
+          documentData = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => resolve('');
+            reader.readAsDataURL(docFile);
+          });
+        } catch(err) {}
+      }
+
+      if (isStudent && !institution) {
+        return showToast('অনুগ্রহ করে শিক্ষাপ্রতিষ্ঠানের নাম লিখুন', 'warning');
+      }
+
+      const body = {
+        username: fd.get('username'),
+        name: fd.get('name') || fd.get('username'),
+        password: fd.get('password'),
+        isStudent,
+        institution,
+        studentId,
+        department,
+        documentName,
+        documentData
+      };
+
+      try {
+        const r = await fetch(`${API}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const d = await r.json();
+        if (d.success) {
+          localStorage.setItem('gbd_token', d.token);
+          user = d.user; favs = d.user.favorites || [];
+          updateUI();
+          el.auth.classList.remove('active');
+          el.aform.reset();
+          const preview = $('doc-preview-name');
+          if (preview) { preview.textContent = ''; preview.style.display = 'none'; }
+          showPage('home');
+          if (user.isStudent) {
+            showToast('🎓 শিক্ষার্থী অ্যাকাউন্ট তৈরি ও ভেরিফিকেশন সফল! ৫০% হাফ পাস সক্রিয়।', 'success', 4000);
+          } else {
+            showToast('যাত্রী রেজিস্ট্রেশন সফল! স্বাগতম!', 'success');
+          }
+        } else showToast(d.message || 'ত্রুটি হয়েছে', 'error');
+      } catch(err) {
+        showToast('কানেকশন ত্রুটি — সার্ভার চালু আছে কি?', 'error');
+      }
+    } else {
+      // Login
+      const body = {
+        username: fd.get('username'),
+        password: fd.get('password')
+      };
+      try {
+        const r = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const d = await r.json();
+        if (d.success) {
+          localStorage.setItem('gbd_token', d.token);
+          user = d.user; favs = d.user.favorites || [];
+          updateUI();
+          el.auth.classList.remove('active');
+          el.aform.reset();
+          showPage('home');
+          if (user.role === 'admin') {
+            showToast('👑 অ্যাডমিন (ADMIN) লগিন সফল!', 'success');
+          } else if (user.isStudent) {
+            showToast('🎓 ভেরিফাইড শিক্ষার্থী প্রোফাইলে স্বাগতম!', 'success');
+          } else {
+            showToast('লগিন সফল! ড্যাশবোর্ডে স্বাগতম', 'success');
+          }
+        } else showToast(d.message || 'ত্রুটি হয়েছে', 'error');
+      } catch(err) {
+        showToast('কানেকশন ত্রুটি — সার্ভার চালু আছে কি?', 'error');
+      }
+    }
   });
 }
 
@@ -296,8 +410,9 @@ function showLanding() {
       <div class="landing-quick-demo-strip">
         <div class="demo-strip-label"><i class="fas fa-bolt" style="color:#00F2FE"></i> ১-ক্লিক ইনস্ট্যান্ট ডেমো লগইন:</div>
         <div class="demo-strip-btns">
-          <button class="quick-pill-btn user" onclick="directDemoLogin('user')"><i class="fas fa-user-check"></i> সাধারণ যাত্রী ডেমো (user / user123)</button>
-          <button class="quick-pill-btn admin" onclick="directDemoLogin('admin')"><i class="fas fa-crown"></i> অ্যাডমিন ডেমো (admin / admin123)</button>
+          <button class="quick-pill-btn user" onclick="directDemoLogin('user')"><i class="fas fa-user-check"></i> সাধারণ যাত্রী (user / user123)</button>
+          <button class="quick-pill-btn student" onclick="directDemoLogin('student')" style="background:linear-gradient(135deg,rgba(0,242,254,0.18),rgba(127,0,255,0.25));border:1.5px solid #00F2FE;color:#00F2FE;padding:8px 16px;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><i class="fas fa-graduation-cap"></i> শিক্ষার্থী ডেমো (student / student123)</button>
+          <button class="quick-pill-btn admin" onclick="directDemoLogin('admin')"><i class="fas fa-crown"></i> অ্যাডমিন (ADMIN / admin123)</button>
         </div>
       </div>
 
@@ -519,8 +634,9 @@ function showLanding() {
         <p>কোনো পাসওয়ার্ড মনে না থাকলে এক ক্লিকেই ডেমো একাউন্টে লগইন করে সকল ফিচার ব্যবহার করুন</p>
       </div>
       <div class="auth-demo-btns">
-        <button class="demo-quick-btn" onclick="directDemoLogin('user')"><i class="fas fa-user"></i> ইউজার ডেমো লগইন</button>
-        <button class="demo-quick-btn" onclick="directDemoLogin('admin')"><i class="fas fa-user-shield"></i> অ্যাডমিন ডেমো লগইন</button>
+        <button class="demo-quick-btn" onclick="directDemoLogin('user')"><i class="fas fa-user"></i> সাধারণ যাত্রী ডেমো</button>
+        <button class="demo-quick-btn" onclick="directDemoLogin('student')"><i class="fas fa-graduation-cap"></i> শিক্ষার্থী ডেমো</button>
+        <button class="demo-quick-btn" onclick="directDemoLogin('admin')"><i class="fas fa-user-shield"></i> অ্যাডমিন (ADMIN)</button>
         <button class="nav-btn-portal login" onclick="showAuth()"><i class="fas fa-sign-in-alt"></i> নিজস্ব লগইন</button>
       </div>
     </section>
@@ -741,9 +857,16 @@ window.calcLandingFare = async function() {
 };
 
 window.directDemoLogin = async function(role) {
-  const username = role === 'admin' ? 'admin' : 'user';
-  const password = role === 'admin' ? 'admin123' : 'user123';
-  showToast(`${role === 'admin' ? 'অ্যাডমিন' : 'ইউজার'} লগইন করা হচ্ছে...`, 'info');
+  let username = 'user';
+  let password = 'user123';
+  if (role === 'admin') {
+    username = 'ADMIN';
+    password = 'admin123';
+  } else if (role === 'student') {
+    username = 'student';
+    password = 'student123';
+  }
+  showToast(`${role === 'admin' ? '👑 অ্যাডমিন (ADMIN)' : (role === 'student' ? '🎓 শিক্ষার্থী' : '🚌 সাধারণ যাত্রী')} লগইন করা হচ্ছে...`, 'info');
   try {
     const r = await fetch(API + '/auth/login', {
       method: 'POST',
@@ -758,9 +881,15 @@ window.directDemoLogin = async function(role) {
       updateUI();
       document.body.classList.remove('landing-active');
       showPage('home');
-      showToast('লগিন সফল! ড্যাশবোর্ডে স্বাগতম', 'success');
+      if (user.role === 'admin') {
+        showToast('👑 অ্যাডমিন ড্যাশবোর্ডে স্বাগতম!', 'success');
+      } else if (user.isStudent) {
+        showToast('🎓 ভেরিফাইড শিক্ষার্থী প্রোফাইলে স্বাগতম! ৫০% হাফ পাস সক্রিয়।', 'success', 4000);
+      } else {
+        showToast('লগিন সফল! সাধারণ যাত্রী ড্যাশবোর্ডে স্বাগতম', 'success');
+      }
     } else {
-      showToast('লগইন ব্যর্থ হয়েছে', 'error');
+      showToast('লগইন ব্যর্থ হয়েছে: ' + (d.message || ''), 'error');
     }
   } catch(e) {
     showToast('সার্ভার কানেকশন ত্রুটি', 'error');
@@ -844,12 +973,13 @@ function showDashboard() {
       </div>`).join('')}
     </div>` : ''}
 
-    <!-- 1. FEATURE: Digital Student Transit Pass Card -->
+    <!-- 1. FEATURE: Digital Transit Pass Card (Student vs Regular) -->
+    ${user?.isStudent ? `
     <div class="student-pass-card">
       <div class="pass-header">
         <div class="pass-title-box">
           <h3><i class="fas fa-graduation-cap" style="color:#00F2FE"></i> ডিজিটাল শিক্ষার্থী হাফ পাস কার্ড</h3>
-          <p>BRTA APPROVED STUDENT TRANSIT PASS • ২০২৬</p>
+          <p>${(user?.institution||'BRTA APPROVED STUDENT TRANSIT PASS').toUpperCase()} • ২০২৬</p>
         </div>
         <div class="pass-seal">৫০% হাফ পাস সক্রিয়</div>
       </div>
@@ -857,10 +987,11 @@ function showDashboard() {
         <div class="pass-avatar">${(user?.name||user?.username||'S').charAt(0).toUpperCase()}</div>
         <div class="pass-details">
           <h4>${user?.name||user?.username||'ছাত্র/ছাত্রী'}</h4>
-          <p><i class="fas fa-id-card"></i> আইডি: <strong>PASS-${(user?.username||'1024').toUpperCase()}</strong></p>
-          <p><i class="fas fa-check-circle" style="color:#00cec9"></i> ঢাকা ও আন্তঃজেলা সকল নন-এসি বাসে প্রযোজ্য</p>
+          <p><i class="fas fa-university" style="color:#00cec9"></i> <strong>${user?.institution||'শিক্ষাপ্রতিষ্ঠান'}</strong></p>
+          <p><i class="fas fa-id-card"></i> আইডি: <strong>${user?.studentId || ('STU-' + (user?.username||'1024').toUpperCase())}</strong></p>
+          <p><i class="fas fa-check-circle" style="color:#00F5A0"></i> ঢাকা ও আন্তঃজেলা সকল নন-এসি বাসে ৫০% ছাড় সক্রিয়</p>
         </div>
-        <div class="pass-qr-box" title="ডিজিটাল ভেরিফিকেশন কোড">
+        <div class="pass-qr-box" title="ডিজিটাল ভেরিফিকেশন কোড" onclick="showStudentPassModal()" style="cursor:pointer">
           <i class="fas fa-qrcode"></i>
         </div>
       </div>
@@ -870,7 +1001,42 @@ function showDashboard() {
           <button class="pass-btn primary" onclick="showStudentPassModal()"><i class="fas fa-expand-alt"></i> কন্ডাক্টরকে দেখান</button>
         </div>
       </div>
+    </div>` : `
+    <div class="regular-pass-card">
+      <div class="pass-header">
+        <div class="pass-title-box">
+          <h3><i class="fas fa-id-card-alt" style="color:#4FACFE"></i> ডিজিটাল সাধারণ যাত্রী স্মার্ট কার্ড</h3>
+          <p>BRTA REGULAR COMMUTER TRANSIT PASS • ২০২৬</p>
+        </div>
+        <div class="pass-seal regular">সাধারণ যাত্রী</div>
+      </div>
+      <div class="pass-body">
+        <div class="pass-avatar" style="background:linear-gradient(135deg,#3B82F6,#00F2FE)">${(user?.name||user?.username||'U').charAt(0).toUpperCase()}</div>
+        <div class="pass-details">
+          <h4>${user?.name||user?.username||'সম্মানিত যাত্রী'}</h4>
+          <p><i class="fas fa-user-tag"></i> আইডি: <strong>PASS-${(user?.username||'1024').toUpperCase()}</strong></p>
+          <p><i class="fas fa-check-circle" style="color:#3B82F6"></i> ঢাকা ও আন্তঃজেলা সকল বাস সার্ভিসে প্রযোজ্য</p>
+        </div>
+        <div class="pass-qr-box" title="যাত্রী কোড">
+          <i class="fas fa-qrcode"></i>
+        </div>
+      </div>
+      <div class="pass-footer">
+        <span>স্ট্যাটাস: সক্রিয় সাধারণ যাত্রী</span>
+        <div class="pass-actions">
+          <button class="pass-btn primary" onclick="showPage('profile')" style="background:linear-gradient(135deg,rgba(0,242,254,0.2),rgba(127,0,255,0.3));border:1px solid #00F2FE;color:#00F2FE"><i class="fas fa-user-graduate"></i> হাফ পাসে রূপান্তর করুন</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Student Upgrade Banner for Regular Passenger -->
+    <div class="upgrade-student-card" onclick="showPage('profile')" style="cursor:pointer">
+      <h3><i class="fas fa-graduation-cap" style="color:#00F2FE"></i> আপনি কি শিক্ষার্থী? ৫০% হাফ পাস সক্রিয় করুন!</h3>
+      <p>আপনার স্কুল/কলেজ/বিশ্ববিদ্যালয়ের আইডি কার্ড বা ডকুমেন্ট আপলোড করে প্রোফাইল ভেরিফাই করুন এবং বাসে অর্ধেক ভাড়ায় যাতায়াত করুন।</p>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;font-weight:700;color:#00F2FE;background:rgba(0,242,254,0.15);padding:6px 14px;border-radius:12px"><i class="fas fa-upload"></i> ডকুমেন্ট আপলোড করতে প্রোফাইলে যান <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </div>`}
 
     <!-- Quick Navigation Glass Grid -->
     <div class="panel-stat-grid">
@@ -1175,12 +1341,14 @@ window.showStudentPassModal = function() {
       ${(user?.name||user?.username||'S').charAt(0).toUpperCase()}
     </div>
     <h2 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:4px">${user?.name||user?.username||'শিক্ষার্থী'}</h2>
-    <p style="font-size:13px;color:#00cec9;font-weight:600;margin-bottom:16px">পাস আইডি: BD-STU-${(user?.username||'2026').toUpperCase()}</p>
+    <p style="font-size:13px;color:#00cec9;font-weight:700;margin-bottom:4px">${user?.institution || 'শিক্ষাপ্রতিষ্ঠান'}</p>
+    <p style="font-size:12px;color:#9ba4b8;font-weight:600;margin-bottom:16px">পাস আইডি: ${user?.studentId || ('BD-STU-' + (user?.username||'2026').toUpperCase())}</p>
     
     <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;text-align:left;font-size:13px;margin-bottom:16px">
       <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>অধিকার:</span> <strong style="color:#00F2FE">৫০% হাফ পাস নিশ্চিত</strong></div>
       <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>এলাকা:</span> <strong>ঢাকা সিটি ও আন্তঃজেলা</strong></div>
       <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>সর্বনিম্ন ভাড়া:</span> <strong>৳৫ (সিটি বাস)</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>ডকুমেন্ট:</span> <strong style="color:#00F5A0">${user?.documentName ? 'যাচাইকৃত নথি সংযুক্ত' : 'আইডি যাচাইকৃত'}</strong></div>
       <div style="display:flex;justify-content:space-between;padding:4px 0"><span>মেয়াদকাল:</span> <strong style="color:#00b894">২০২৬-২০২৭ সেশন</strong></div>
     </div>
 
@@ -1194,11 +1362,121 @@ window.showStudentPassModal = function() {
       * সরকারি প্রজ্ঞাপন অনুযায়ী বাসে পরিচয়পত্র বা এই ডিজিটাল কার্ড প্রদর্শন সাপেক্ষে সকল নন-এসি বাসে ৫০% ভাড়া ছাড় বাধ্যতামূলক।
     </p>
     
-    <button onclick="el.modal.classList.remove('active')" style="width:100%;margin-top:14px;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#00F2FE,#4FACFE);color:#0a0a1a;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">
-      বন্ধ করুন
-    </button>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      ${user?.documentData ? `<button onclick="viewStudentDocumentModal()" style="flex:1;padding:12px;border:1px solid #00F2FE;border-radius:12px;background:rgba(0,242,254,0.15);color:#00F2FE;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit"><i class="fas fa-file-alt"></i> ডকুমেন্ট প্রিভিউ</button>` : ''}
+      <button onclick="el.modal.classList.remove('active')" style="flex:1;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#00F2FE,#4FACFE);color:#0a0a1a;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">
+        বন্ধ করুন
+      </button>
+    </div>
   </div>`;
   showModal(passHtml);
+};
+
+window.viewStudentDocumentModal = function() {
+  if (!user) return;
+  const docName = user.documentName || 'student_id_document.pdf';
+  const hasData = user.documentData && user.documentData.length > 20;
+  const isImage = hasData && user.documentData.startsWith('data:image/');
+
+  const content = hasData ? (
+    isImage
+      ? `<div style="max-height:360px;overflow:auto;margin:12px 0;border-radius:12px;background:rgba(0,0,0,0.3);padding:8px"><img src="${user.documentData}" style="max-width:100%;height:auto;border-radius:8px;display:block;margin:0 auto" alt="Student Document"></div>`
+      : `<div style="margin:12px 0;height:320px;border-radius:12px;overflow:hidden"><iframe src="${user.documentData}" style="width:100%;height:100%;border:none"></iframe></div>`
+  ) : `
+    <div style="padding:28px 20px;margin:14px 0;border-radius:16px;background:rgba(0,242,254,0.06);border:1px dashed rgba(0,242,254,0.3)">
+      <i class="fas fa-file-signature" style="font-size:42px;color:#00F2FE;margin-bottom:12px"></i>
+      <h4 style="font-size:15px;color:#fff;margin-bottom:6px">যাচাইকৃত শিক্ষার্থী প্রমাণপত্র</h4>
+      <div style="font-size:12px;color:#00cec9;font-weight:600">${docName}</div>
+      <p style="font-size:11px;opacity:0.7;margin-top:8px">প্রতিষ্ঠান: <strong>${user.institution || 'অনুমোদিত শিক্ষাপ্রতিষ্ঠান'}</strong><br>আইডি/রোল: <strong>${user.studentId || 'যাচাইকৃত'}</strong></p>
+    </div>
+  `;
+
+  showModal(`
+    <div class="detail-card" style="text-align:center;padding:24px 20px;border-radius:22px;background:linear-gradient(135deg,rgba(16,24,52,0.98),rgba(20,32,68,0.95));border:1.5px solid #00F5A0">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span class="doc-verified-badge"><i class="fas fa-check-circle"></i> বিআরটিএ ও প্রতিষ্ঠান যাচাইকৃত</span>
+        <span style="font-size:11px;color:#9ba4b8">${new Date().toLocaleDateString('bn-BD')}</span>
+      </div>
+      <h3 style="font-size:18px;font-weight:800;color:#fff;margin-bottom:2px"><i class="fas fa-id-card" style="color:#00F5A0"></i> শিক্ষার্থী ভেরিফিকেশন নথি</h3>
+      <p style="font-size:12px;color:#9ba4b8">${user.name || user.username} • ${user.institution || 'শিক্ষার্থী'}</p>
+      ${content}
+      <div style="display:flex;gap:10px;margin-top:14px">
+        ${hasData ? `<a href="${user.documentData}" download="${docName}" class="panel-btn" style="flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px"><i class="fas fa-download"></i> ডাউনলোড</a>` : ''}
+        <button class="panel-btn" onclick="el.modal.classList.remove('active')" style="flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff">বন্ধ করুন</button>
+      </div>
+    </div>
+  `);
+};
+
+window.handleUpgradeDocChange = function(input) {
+  const file = input?.files?.[0];
+  const p = $('upgrade-doc-preview');
+  if (p) {
+    if (file) {
+      p.textContent = `✓ ${file.name} (${Math.round(file.size/1024)} KB)`;
+      p.style.display = 'block';
+    } else {
+      p.textContent = '';
+      p.style.display = 'none';
+    }
+  }
+};
+
+window.submitStudentUpgrade = async function(e) {
+  e.preventDefault();
+  const tk = localStorage.getItem('gbd_token');
+  if (!tk) return showToast('প্রথমে লগিন করুন', 'warning');
+
+  const institution = $('upgrade-institution')?.value?.trim();
+  const studentId = $('upgrade-student-id')?.value?.trim() || '';
+  const department = $('upgrade-department')?.value?.trim() || '';
+  const file = $('upgrade-document-file')?.files?.[0];
+
+  if (!institution) return showToast('শিক্ষাপ্রতিষ্ঠানের নাম লিখুন', 'warning');
+
+  let documentName = '';
+  let documentData = '';
+  if (file) {
+    documentName = file.name;
+    try {
+      documentData = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    } catch(err) {}
+  }
+
+  showToast('ডকুমেন্ট যাচাই ও শিক্ষার্থী প্রোফাইল তৈরি করা হচ্ছে...', 'info');
+
+  try {
+    const r = await fetch(`${API}/users/verify-student`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${tk}`
+      },
+      body: JSON.stringify({
+        institution,
+        studentId,
+        department,
+        documentName,
+        documentData
+      })
+    });
+    const d = await r.json();
+    if (d.success) {
+      user = d.user;
+      updateUI();
+      showPage('profile');
+      showToast('🎉 অভিনন্দন! আপনার ডকুমেন্ট যাচাই সফল হয়েছে এবং প্রোফাইলটি ভেরিফাইড শিক্ষার্থী হিসেবে আপডেট হয়েছে!', 'success', 5000);
+    } else {
+      showToast(d.message || 'যাচাই ব্যর্থ হয়েছে', 'error');
+    }
+  } catch(err) {
+    showToast('সার্ভার কানেকশন ত্রুটি', 'error');
+  }
 };
 
 window.changeRadarStop = function(stop) {
@@ -1570,18 +1848,118 @@ function showPage(page) {
       html = `<div style="text-align:center;padding:50px 20px;opacity:0.7"><i class="fas fa-user-lock" style="font-size:50px;margin-bottom:14px"></i><h3 style="font-size:18px">লগিন করুন</h3><button onclick="showAuth()" style="margin-top:16px;padding:14px 30px;border:none;border-radius:14px;background:var(--gr);color:#fff;font-weight:600;cursor:pointer;font-family:inherit">লগিন</button></div>`;
     } else {
       const myFavs = routes.filter(r => favs.includes(r._id)).length;
-      html = `<div style="text-align:center;padding:32px 20px;background:var(--card-bg);border:1px solid var(--border);border-radius:24px;margin-bottom:20px">
-        <div style="width:80px;height:80px;border-radius:50%;background:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:32px;color:#fff">${(user.name||user.username).charAt(0).toUpperCase()}</div>
-        <div style="font-size:20px;font-weight:700">${user.name||user.username}</div>
-        <div style="font-size:12px;opacity:0.5">@${user.username} ${user.role==='admin'?'👑 অ্যাডমিন':'• যাত্রী'}</div>
+      const isStu = user.isStudent || user.userType === 'student';
+      const isAdm = user.role === 'admin' || user.username?.toUpperCase() === 'ADMIN';
+
+      html = `
+      <!-- User Profile Header Card -->
+      <div style="text-align:center;padding:28px 20px;background:var(--card-bg);border:1.5px solid ${isStu ? '#00F2FE' : (isAdm ? '#F59E0B' : 'rgba(255,255,255,0.12)')};border-radius:24px;margin-bottom:16px;position:relative;overflow:hidden;backdrop-filter:blur(20px)">
+        <div style="width:84px;height:84px;border-radius:50%;background:${isStu ? 'linear-gradient(135deg,#7F00FF,#00F2FE)' : (isAdm ? 'linear-gradient(135deg,#f59e0b,#e17055)' : 'linear-gradient(135deg,#2563eb,#00f2fe)')};display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:34px;color:#fff;font-weight:800;border:3px solid rgba(255,255,255,0.25);box-shadow:0 8px 25px rgba(0,0,0,0.3)">
+          ${(user.name||user.username).charAt(0).toUpperCase()}
+        </div>
+        <div style="font-size:20px;font-weight:800;color:#fff">${user.name||user.username}</div>
+        <div style="font-size:12px;color:#9ba4b8;margin-top:2px">@${user.username}</div>
+        
+        <div style="margin-top:10px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+          ${isAdm ? `<span style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:rgba(245,158,11,0.2);border:1px solid #f59e0b;color:#f59e0b;font-size:12px;font-weight:800"><i class="fas fa-crown"></i> সিস্টেম অ্যাডমিন (ADMIN)</span>` : ''}
+          ${isStu ? `<span class="doc-verified-badge" style="background:rgba(0,242,254,0.15);border-color:#00F2FE;color:#00F2FE"><i class="fas fa-graduation-cap"></i> ভেরিফাইড শিক্ষার্থী (Verified Student)</span>` : `<span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;font-size:11.5px;font-weight:700"><i class="fas fa-user-tag"></i> সাধারণ যাত্রী (Regular Passenger)</span>`}
+          ${isStu ? `<span style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;background:rgba(0,245,160,0.15);border:1px solid #00F5A0;color:#00F5A0;font-size:11.5px;font-weight:700"><i class="fas fa-percentage"></i> ৫০% হাফ পাস সক্রিয়</span>` : ''}
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+
+      <!-- DIFFERENTIATED PROFILE CONTENT -->
+      ${isStu ? `
+      <!-- STUDENT VERIFIED PROFILE SECTION -->
+      <div class="panel-glass" style="margin-bottom:16px;border-color:rgba(0,242,254,0.3)">
+        <h3 style="font-size:15px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+          <span><i class="fas fa-id-card" style="color:#00F2FE"></i> শিক্ষার্থী পরিচিতি ও ভেরিফিকেশন নথি</span>
+          <span class="doc-verified-badge"><i class="fas fa-check-circle"></i> বিআরটিএ অনুমোদিত</span>
+        </h3>
+        <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;font-size:13px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <span style="opacity:0.7"><i class="fas fa-university" style="color:#00cec9;margin-right:6px"></i>শিক্ষাপ্রতিষ্ঠান:</span>
+            <strong style="color:#fff">${user.institution || 'ঢাকা বিশ্ববিদ্যালয়'}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <span style="opacity:0.7"><i class="fas fa-barcode" style="color:#00cec9;margin-right:6px"></i>শিক্ষার্থী আইডি / রোল:</span>
+            <strong style="color:#00F2FE">${user.studentId || ('BD-STU-' + (user.username||'2026').toUpperCase())}</strong>
+          </div>
+          ${user.department ? `
+          <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <span style="opacity:0.7"><i class="fas fa-book-reader" style="color:#00cec9;margin-right:6px"></i>বিভাগ / শ্রেণি:</span>
+            <strong style="color:#fff">${user.department}</strong>
+          </div>` : ''}
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:2px">
+            <span style="opacity:0.7"><i class="fas fa-file-invoice" style="color:#00cec9;margin-right:6px"></i>আপলোডকৃত প্রমাণপত্র:</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;color:#00F5A0;font-weight:700">${user.documentName || 'আইডি কার্ড (ভেরিফাইড)'}</span>
+              <button class="doc-view-btn" onclick="viewStudentDocumentModal()"><i class="fas fa-eye"></i> দেখুন</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:10px">
+          <button class="panel-btn" onclick="showStudentPassModal()" style="margin-top:0;background:linear-gradient(135deg,#00F2FE,#4FACFE);color:#0a0a1a;font-weight:700"><i class="fas fa-qrcode"></i> কন্ডাক্টরকে ডিজিটাল হাফ পাস কার্ড দেখান</button>
+        </div>
+      </div>
+      ` : `
+      <!-- REGULAR PASSENGER PROFILE & STUDENT UPGRADE SECTION -->
+      <div class="panel-glass" style="margin-bottom:16px">
+        <h3 style="font-size:15px;margin-bottom:8px"><i class="fas fa-user-check" style="color:#4FACFE"></i> সাধারণ যাত্রী বিবরণী</h3>
+        <p style="font-size:12.5px;color:#9ba4b8;line-height:1.5;margin-bottom:12px">
+          আপনি বর্তমানে সাধারণ যাত্রী হিসেবে নিবন্ধিত আছেন। সাধারণ যাত্রীদের ক্ষেত্রে বিআরটিএ নির্ধারিত নিয়মিত ভাড়া (প্রতি কিমি ২.৪৫ টাকা, সর্বনিম্ন ১০ টাকা) প্রযোজ্য।
+        </p>
+        <div style="background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px;font-size:13px;display:flex;justify-content:space-between;align-items:center">
+          <span>প্যাসেঞ্জার রেফারেন্স:</span>
+          <strong style="color:#4FACFE">PASS-${user.username.toUpperCase()}</strong>
+        </div>
+      </div>
+
+      <!-- IN-PROFILE UPGRADE CARD -->
+      <div class="upgrade-student-card">
+        <h3><i class="fas fa-graduation-cap" style="color:#00F2FE"></i> শিক্ষার্থী হাফ পাসের জন্য আবেদন ও ডকুমেন্ট আপলোড</h3>
+        <p>
+          আপনি কি কোনো স্কুল, কলেজ বা বিশ্ববিদ্যালয়ের শিক্ষার্থী? আপনার বৈধ স্টুডেন্ট আইডি কার্ড বা প্রত্যয়নপত্রের ছবি/ডকুমেন্ট আপলোড করে প্রোফাইল ভেরিফাই করুন। তাৎক্ষণিক ৫০% হাফ পাস সক্রিয় হয়ে যাবে।
+        </p>
+        <form onsubmit="submitStudentUpgrade(event)">
+          <div style="margin-bottom:10px">
+            <label style="font-size:12px;color:#9ba4b8;display:block;margin-bottom:4px">শিক্ষাপ্রতিষ্ঠানের নাম *</label>
+            <input class="panel-input" id="upgrade-institution" placeholder="যেমন: ঢাকা বিশ্ববিদ্যালয় / নর্থ সাউথ / ঢাকা কলেজ" required style="margin-bottom:0">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+            <div>
+              <label style="font-size:12px;color:#9ba4b8;display:block;margin-bottom:4px">শিক্ষার্থী আইডি / রোল</label>
+              <input class="panel-input" id="upgrade-student-id" placeholder="যেমন: DU-2022-8921" style="margin-bottom:0">
+            </div>
+            <div>
+              <label style="font-size:12px;color:#9ba4b8;display:block;margin-bottom:4px">বিভাগ / শ্রেণি</label>
+              <input class="panel-input" id="upgrade-department" placeholder="যেমন: সিএসই / দ্বাদশ" style="margin-bottom:0">
+            </div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:12px;color:#9ba4b8;display:block;margin-bottom:4px">আইডি কার্ড / প্রত্যয়নপত্র ফাইল (.jpg, .png, .pdf) *</label>
+            <input type="file" id="upgrade-document-file" accept="image/*,.pdf" style="display:none" onchange="handleUpgradeDocChange(this)">
+            <div onclick="document.getElementById('upgrade-document-file').click()" style="border:1.5px dashed rgba(0,242,254,0.4);border-radius:14px;padding:14px;text-align:center;cursor:pointer;background:rgba(0,242,254,0.05);transition:all 0.2s">
+              <i class="fas fa-file-upload" style="color:#00F2FE;font-size:22px;margin-bottom:6px"></i>
+              <div style="font-size:12px;font-weight:600;color:#fff">আইডি কার্ডের ছবি বা পিডিএফ সিলেক্ট করুন</div>
+              <span id="upgrade-doc-preview" style="font-size:11px;color:#00F5A0;margin-top:4px;display:none;font-weight:700"></span>
+            </div>
+          </div>
+          <button class="panel-btn" type="submit" style="background:linear-gradient(135deg,#00F2FE,#7F00FF);color:#fff;font-weight:700;margin-top:0"><i class="fas fa-check-circle"></i> ডকুমেন্ট জমা দিন ও শিক্ষার্থী প্রোফাইলে রূপান্তর করুন</button>
+        </form>
+      </div>
+      `}
+
+      <!-- User Stats Grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
         <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--s)">${myFavs}</div><div style="font-size:11px;opacity:0.5">পছন্দের রুট</div></div>
-        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--w)">${user.searchHistory?.length||0}</div><div style="font-size:11px;opacity:0.5">সার্চ</div></div>
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--w)">${user.searchHistory?.length||0}</div><div style="font-size:11px;opacity:0.5">অনুসন্ধান সংখ্যা</div></div>
       </div>
+
+      <!-- Navigation & Action List -->
       <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:18px;padding:8px">
-        <div onclick="showPage('favorites')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;cursor:pointer"><i style="width:20px;color:var(--p)" class="fas fa-heart"></i><span style="flex:1;font-size:14px">পছন্দের রুট</span><i class="fas fa-chevron-right" style="opacity:0.3;font-size:12px"></i></div>
-        ${user.role==='admin'?`<div onclick="showPage('admin')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;cursor:pointer"><i style="width:20px;color:var(--p)" class="fas fa-shield-alt"></i><span style="flex:1;font-size:14px">অ্যাডমিন প্যানেল</span><i class="fas fa-chevron-right" style="opacity:0.3;font-size:12px"></i></div>`:''}
+        <div onclick="showPage('favorites')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;cursor:pointer"><i style="width:20px;color:var(--p)" class="fas fa-heart"></i><span style="flex:1;font-size:14px">পছন্দের রুট তালিকা</span><i class="fas fa-chevron-right" style="opacity:0.3;font-size:12px"></i></div>
+        ${user.role==='admin'?`<div onclick="showPage('admin')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;cursor:pointer"><i style="width:20px;color:#f59e0b" class="fas fa-shield-alt"></i><span style="flex:1;font-size:14px;color:#f59e0b;font-weight:700">👑 অ্যাডমিন কন্ট্রোল প্যানেল (ADMIN)</span><i class="fas fa-chevron-right" style="opacity:0.3;font-size:12px"></i></div>`:''}
         <div onclick="logout()" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:12px;cursor:pointer"><i style="width:20px;color:var(--d)" class="fas fa-sign-out-alt"></i><span style="flex:1;font-size:14px;color:var(--d)">লগ আউট</span><i class="fas fa-chevron-right" style="opacity:0.3;font-size:12px"></i></div>
       </div>
       <div style="text-align:center;padding:20px 0;opacity:0.25;font-size:11px;letter-spacing:2px">DEVELOPED BY SAMS ALIF</div>`;

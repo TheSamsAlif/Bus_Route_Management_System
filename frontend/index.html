@@ -61,15 +61,19 @@
           <button class="auth-tab" data-tab="register">রেজিস্টার</button>
         </div>
         <div class="auth-demo-quick-box">
-          <div class="demo-box-label"><i class="fas fa-bolt" style="color:#00F2FE"></i> দ্রুত টেস্ট করতে ১-ক্লিক ডেমো অ্যাকাউন্ট:</div>
+          <div class="demo-box-label"><i class="fas fa-bolt" style="color:#00F2FE"></i> ১-ক্লিক ডেমো অ্যাকাউন্ট অ্যাক্সেস:</div>
           <div class="demo-btn-row">
             <button type="button" class="modal-demo-btn user" onclick="directDemoLogin('user')">
-              <span class="m-demo-role"><i class="fas fa-user-check"></i> সাধারণ যাত্রী ডেমো</span>
-              <span class="m-demo-creds">ইউজার: <b>user</b> | পাসওয়ার্ড: <b>user123</b></span>
+              <span class="m-demo-role"><i class="fas fa-user"></i> সাধারণ যাত্রী</span>
+              <span class="m-demo-creds">ইউজার: <b>user</b> | <b>user123</b></span>
+            </button>
+            <button type="button" class="modal-demo-btn student" onclick="directDemoLogin('student')">
+              <span class="m-demo-role" style="color:#00F5A0"><i class="fas fa-graduation-cap"></i> শিক্ষার্থী ডেমো</span>
+              <span class="m-demo-creds">ইউজার: <b>student</b> | <b>student123</b></span>
             </button>
             <button type="button" class="modal-demo-btn admin" onclick="directDemoLogin('admin')">
-              <span class="m-demo-role"><i class="fas fa-crown"></i> সিস্টেম অ্যাডমিন ডেমো</span>
-              <span class="m-demo-creds">ইউজার: <b>admin</b> | পাসওয়ার্ড: <b>admin123</b></span>
+              <span class="m-demo-role" style="color:#fbbf24"><i class="fas fa-crown"></i> অ্যাডমিন</span>
+              <span class="m-demo-creds">ইউজার: <b>ADMIN</b> | <b>admin123</b></span>
             </button>
           </div>
         </div>
@@ -86,6 +90,41 @@
             <label>পাসওয়ার্ড</label>
             <input type="password" name="password" placeholder="পাসওয়ার্ড" required>
           </div>
+          
+          <!-- Student Verification Toggle & Upload Fields (Visible only in Register tab) -->
+          <div id="student-reg-box" style="display:none;margin-bottom:14px">
+            <div style="background:rgba(0,242,254,0.06);border:1px solid rgba(0,242,254,0.25);border-radius:14px;padding:12px;margin-bottom:10px">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:700;color:#00F2FE">
+                <input type="checkbox" id="reg-is-student" name="isStudent" onchange="toggleStudentRegFields(this.checked)">
+                <span>🎓 আমি একজন শিক্ষার্থী (৫০% হাফ পাস চাই)</span>
+              </label>
+            </div>
+            
+            <div id="student-doc-fields" style="display:none;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px">
+              <div class="fg" style="margin-bottom:10px">
+                <label>শিক্ষা প্রতিষ্ঠানের নাম <span style="color:#00F2FE">*</span></label>
+                <input type="text" id="reg-institution" name="institution" placeholder="যেমন: ঢাকা বিশ্ববিদ্যালয়, বুয়েট, ঢাকা কলেজ">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+                <div class="fg" style="margin-bottom:0">
+                  <label>রোল / স্টুডেন্ট আইডি <span style="color:#00F2FE">*</span></label>
+                  <input type="text" id="reg-student-id" name="studentId" placeholder="যেমন: DU-2022-89">
+                </div>
+                <div class="fg" style="margin-bottom:0">
+                  <label>বিভাগ / ক্লাস</label>
+                  <input type="text" id="reg-dept" name="department" placeholder="যেমন: সিএসই / ১২তম">
+                </div>
+              </div>
+              <div class="fg" style="margin-bottom:0">
+                <label>📄 স্টুডেন্ট আইডি কার্ড / ডকুমেন্ট আপলোড <span style="color:#00F2FE">*</span></label>
+                <input type="file" id="reg-doc-file" accept="image/*,.pdf" onchange="handleDocFileUpload(event)" style="padding:8px;font-size:12px">
+                <div id="doc-preview-badge" style="display:none;margin-top:8px;font-size:11px;color:#00F5A0">
+                  <i class="fas fa-check-circle"></i> <span id="doc-preview-name">ডকুমেন্ট সংযুক্ত হয়েছে</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <button type="submit" class="auth-submit"><span>লগিন</span> <i class="fas fa-arrow-right"></i></button>
         </form>
       </div>

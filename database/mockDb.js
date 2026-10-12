@@ -63,10 +63,12 @@ function seedDatabase() {
 
   // ========== USERS ==========
   db.users.push(
-    { _id: detId('user'), username: 'admin', name: 'Admin', email: 'admin@bd.com', password: 'admin123_hashed', role: 'admin', language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
-    { _id: detId('user'), username: 'user', name: 'Demo User', email: 'user@bd.com', password: 'user123_hashed', role: 'user', language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
-    { _id: detId('user'), username: 'sams', name: 'Sams Alif', email: 'sams@bd.com', password: 'sams123_hashed', role: 'user', language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
-    { _id: detId('user'), username: 'passenger', name: 'Rafiq Hasan', email: 'rafiq@bd.com', password: 'pass123_hashed', role: 'user', language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() }
+    { _id: detId('user'), username: 'ADMIN', name: 'System Administrator', email: 'admin@bd.com', password: 'admin123_hashed', role: 'admin', language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
+    { _id: detId('user'), username: 'admin', name: 'System Administrator', email: 'admin@bd.com', password: 'admin123_hashed', role: 'admin', language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
+    { _id: detId('user'), username: 'user', name: 'কামাল হোসেন', email: 'user@bd.com', password: 'user123_hashed', role: 'user', userType: 'regular', isStudent: false, studentVerified: false, language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
+    { _id: detId('user'), username: 'student', name: 'তানভীর আহমেদ', email: 'student@bd.com', password: 'student123_hashed', role: 'user', userType: 'student', isStudent: true, institution: 'ঢাকা বিশ্ববিদ্যালয় (DU)', studentId: 'DU-2022-8921', department: 'কম্পিউটার সায়েন্স', documentName: 'du_student_id.png', studentVerified: true, verifiedAt: new Date(), language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
+    { _id: detId('user'), username: 'sams', name: 'Sams Alif', email: 'sams@bd.com', password: 'sams123_hashed', role: 'user', userType: 'student', isStudent: true, institution: 'বুয়েট (BUET)', studentId: 'BUET-2023-104', department: 'ইটিই', documentName: 'buet_id_card.png', studentVerified: true, verifiedAt: new Date(), language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() },
+    { _id: detId('user'), username: 'passenger', name: 'রফিক হাসান', email: 'rafiq@bd.com', password: 'pass123_hashed', role: 'user', userType: 'regular', isStudent: false, studentVerified: false, language: 'bn', darkMode: false, favorites: [], searchHistory: [], createdAt: new Date() }
   );
 
   // ========== OPERATORS ==========

@@ -43,6 +43,40 @@ router.put('/profile', auth, async (req, res) => {
   }
 });
 
+// Verify Student Document & Upgrade Profile
+router.post('/verify-student', auth, async (req, res) => {
+  try {
+    const { institution, studentId, department, documentData, documentName } = req.body;
+    if (!institution || !studentId) {
+      return res.status(400).json({ success: false, message: 'শিক্ষা প্রতিষ্ঠানের নাম ও স্টুডেন্ট আইডি প্রদান করুন' });
+    }
+    const db = getDb();
+    const idx = db.users.findIndex(u => u._id === req.user.id);
+    if (idx === -1) return res.status(404).json({ success: false, message: 'User not found' });
+
+    Object.assign(db.users[idx], {
+      userType: 'student',
+      isStudent: true,
+      institution,
+      studentId,
+      department: department || '',
+      documentData: documentData || '',
+      documentName: documentName || (documentData ? 'student_id_proof.png' : 'verified_doc.pdf'),
+      studentVerified: true,
+      verifiedAt: new Date()
+    });
+
+    const { password, ...userData } = db.users[idx];
+    res.json({
+      success: true,
+      message: 'অভিনন্দন! আপনার শিক্ষার্থী স্টুডেন্ট আইডি ভেরিফাই হয়েছে এবং ৫০% হাফ পাস সক্রিয় হয়েছে!',
+      user: userData
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 router.post('/favorites/:routeId', auth, async (req, res) => {
   try {
     const db = getDb();
