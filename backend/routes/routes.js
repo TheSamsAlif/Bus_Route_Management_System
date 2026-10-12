@@ -9,21 +9,53 @@ function populateRoute(route, db) {
   return { ...route, buses, operators };
 }
 
-function partialMatch(text, query) {
-  if (!text || !query) return false;
-  return text.toLowerCase().includes(query.toLowerCase()) ||
-         text.toLowerCase().replace(/[\u0980-\u09FF]/g, '').includes(query.toLowerCase().replace(/[\u0980-\u09FF]/g, '')) ||
-         query.split(' ').some(q => text.toLowerCase().includes(q));
+function normalizeBn(str) {
+  if (!str) return '';
+  return str.toLowerCase()
+    .replace(/[()\/,\-–]/g, ' ')
+    .replace(/ী/g, 'ি')
+    .replace(/ূ/g, 'ু')
+    .replace(/ণ/g, 'ন')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
+function partialMatch(text, query) {
+  if (!text || !query) return false;
+  const t = text.toLowerCase().trim();
+  const q = query.toLowerCase().trim();
+  if (t === q || t.includes(q) || q.includes(t)) return true;
+  
+  const normT = normalizeBn(t);
+  const normQ = normalizeBn(q);
+  if (normT === normQ || normT.includes(normQ) || normQ.includes(normT)) return true;
+  
+  const words = normQ.split(' ').filter(w => w.length > 1);
+  if (words.length > 0 && words.every(w => normT.includes(w))) return true;
+  return false;
+}
+
+function routeHasStop(r, stopQuery) {
+  if (partialMatch(r.from, stopQuery) || partialMatch(r.to, stopQuery) || partialMatch(r.name, stopQuery)) return true;
+  if (r.fromEn && partialMatch(r.fromEn, stopQuery)) return true;
+  if (r.toEn && partialMatch(r.toEn, stopQuery)) return true;
+  if (r.en && partialMatch(r.en, stopQuery)) return true;
+  return (r.busStops || []).some(s =>
+    partialMatch(s.name, stopQuery) ||
+    (s.en && partialMatch(s.en, stopQuery)) ||
+    (s.displayName && partialMatch(s.displayName, stopQuery))
+  );
+}
+
+
 function findTransitRoutes(from, to, db) {
-  const fromRoutes = db.routes.filter(r => r.isActive !== false && (partialMatch(r.from, from) || r.busStops.some(s => partialMatch(s.name, from))));
-  const toRoutes = db.routes.filter(r => r.isActive !== false && (partialMatch(r.to, to) || r.busStops.some(s => partialMatch(s.name, to))));
+  const fromRoutes = db.routes.filter(r => r.isActive !== false && routeHasStop(r, from));
+  const toRoutes = db.routes.filter(r => r.isActive !== false && routeHasStop(r, to));
   const transits = [];
   for (const f of fromRoutes) {
     for (const t of toRoutes) {
       if (f._id === t._id) continue;
-      const commonStops = f.busStops.filter(fs => t.busStops.some(ts => ts.name === fs.name));
+      const commonStops = (f.busStops || []).filter(fs => (t.busStops || []).some(ts => ts.name === fs.name));
       if (commonStops.length > 0) {
         transits.push({
           firstRoute: f,
@@ -50,7 +82,8 @@ router.get('/', async (req, res) => {
       const q = search.toLowerCase();
       results = results.filter(r =>
         partialMatch(r.name, q) || partialMatch(r.from, q) || partialMatch(r.to, q) ||
-        r.busStops.some(s => partialMatch(s.name, q))
+        (r.en && partialMatch(r.en, q)) ||
+        (r.busStops || []).some(s => partialMatch(s.name, q) || (s.en && partialMatch(s.en, q)))
       );
     }
     if (limit) results = results.slice(0, parseInt(limit));
@@ -83,25 +116,8 @@ router.get('/search/from/:from/to/:to', async (req, res) => {
     const db = getDb();
     const results = db.routes.filter(r => r.isActive !== false);
 
-    const f = from.toLowerCase(), t = to.toLowerCase();
-
-    // Strict match: from == from AND to == to (or reversed)
-    let directMatches = results.filter(r => {
-      const fromMatch = partialMatch(r.from, from) && partialMatch(r.to, to);
-      const reversed = partialMatch(r.from, to) && partialMatch(r.to, from);
-      return fromMatch || reversed;
-    });
-
-    // Broader match: if strict fails, try stop-based matching
-    if (directMatches.length === 0) {
-      directMatches = results.filter(r => {
-        const startsWithFrom = partialMatch(r.from, from) || r.busStops.slice(0, Math.ceil(r.busStops.length / 2)).some(s => partialMatch(s.name, from));
-        const endsWithTo = partialMatch(r.to, to) || r.busStops.slice(Math.floor(r.busStops.length / 2)).some(s => partialMatch(s.name, to));
-        const reversed = (partialMatch(r.from, to) || r.busStops.slice(0, Math.ceil(r.busStops.length / 2)).some(s => partialMatch(s.name, to))) &&
-                         (partialMatch(r.to, from) || r.busStops.slice(Math.floor(r.busStops.length / 2)).some(s => partialMatch(s.name, from)));
-        return (startsWithFrom && endsWithTo) || reversed;
-      });
-    }
+    // Direct matches: either endpoints or passing through both stops
+    let directMatches = results.filter(r => routeHasStop(r, from) && routeHasStop(r, to));
 
     directMatches.forEach(r => { r.searchCount = (r.searchCount || 0) + 1; });
 
@@ -136,12 +152,31 @@ router.get('/suggest/stops', async (req, res) => {
     if (!q || q.length < 1) return res.json({ success: true, suggestions: [] });
     const db = getDb();
     const query = q.toLowerCase();
-    const stops = db.stops
-      .filter(s => s.isActive !== false && (s.name.toLowerCase().includes(query) || (s.bn || '').toLowerCase().includes(query)))
-      .slice(0, 8);
-    const routeStops = [...new Set(db.routes.filter(r => r.isActive !== false).flatMap(r => r.busStops.map(s => s.name)))];
-    const matchedRouteStops = routeStops.filter(s => s.toLowerCase().includes(query)).slice(0, 5);
-    const suggestions = [...new Set([...stops.map(s => s.name), ...matchedRouteStops])].slice(0, 10);
+    const matched = [];
+
+    // Match stops list
+    (db.stops || []).forEach(s => {
+      if (s.isActive !== false) {
+        if (partialMatch(s.name, query) || (s.bn && partialMatch(s.bn, query))) {
+          matched.push(s.name);
+        }
+      }
+    });
+
+    // Match route endpoints and stops
+    (db.routes || []).forEach(r => {
+      if (r.isActive !== false) {
+        if (partialMatch(r.from, query)) matched.push(r.from);
+        if (partialMatch(r.to, query)) matched.push(r.to);
+        (r.busStops || []).forEach(st => {
+          if (partialMatch(st.name, query) || (st.en && partialMatch(st.en, query))) {
+            matched.push(st.name);
+          }
+        });
+      }
+    });
+
+    const suggestions = [...new Set(matched)].slice(0, 10);
     res.json({ success: true, suggestions });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

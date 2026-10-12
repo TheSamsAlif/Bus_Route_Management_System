@@ -235,105 +235,499 @@ function renderAnns() {
   </div>`;
 }
 
-// ================ LANDING PAGE (Redesigned) ================
+// ================ LANDING PAGE (Redesigned Transit Portal) ================
+let _heroCategoryFilter = 'all';
+
 function showLanding() {
   document.body.classList.add('landing-active');
   cacheEl();
+  
+  const samplePopular = routes.slice(0, 6);
+  
   el.main.innerHTML = `
-  <div class="landing-bg">
-    <div class="landing-blur one"></div>
-    <div class="landing-blur two"></div>
-    <div class="landing-blur three"></div>
-  </div>
-  <div class="landing-container">
-    <div class="landing-main">
-      <div class="landing-left">
-        <div class="landing-logo">
-          <div class="landing-logo-icon"><i class="fas fa-bus"></i></div>
-          <div>
-            <h2>গন্তব্য BD</h2>
-            <p>SMART BUS APP</p>
-          </div>
+  <div class="portal-wrapper">
+    <!-- Ambient Background Lighting -->
+    <div class="portal-ambient">
+      <div class="ambient-glow glow-1"></div>
+      <div class="ambient-glow glow-2"></div>
+      <div class="ambient-glow glow-3"></div>
+    </div>
+
+    <!-- Portal Navigation Bar -->
+    <header class="landing-navbar">
+      <div class="landing-nav-brand" onclick="showLanding()">
+        <div class="landing-nav-icon"><i class="fas fa-bus-alt"></i></div>
+        <div class="landing-nav-text">
+          <h2>গন্তব্য BD</h2>
+          <span>SMART BUS PORTAL</span>
         </div>
-        <div class="landing-badge">
-          🚍 বাংলাদেশের স্মার্ট বাস ট্রাভেল পার্টনার
-        </div>
-        <h1 class="landing-title">
-          <span>বাস ভাড়া</span><br>
-          সহজেই খুঁজুন
-        </h1>
-        <div class="landing-features">
-          <div class="landing-feature-card">
-            <h3>🚌</h3>
-            <p>৬২টি রুট</p>
-          </div>
-          <div class="landing-feature-card">
-            <h3>💰</h3>
-            <p>ভাড়া ক্যালক</p>
-          </div>
-          <div class="landing-feature-card">
-            <h3>🔍</h3>
-            <p>স্মার্ট সার্চ</p>
-          </div>
-        </div>
-        <p class="landing-desc">
-          রুট সার্চ, ভাড়া ক্যালকুলেশন ও ট্রাভেল অ্যাসিস্ট্যান্ট — সব এক জায়গায়। ঢাকা সিটি, ইন্টারসিটি ও লং রুটের জন্য নির্ভরযোগ্য তথ্য।
-        </p>
       </div>
-      <div class="landing-right">
-        <div class="landing-login-card">
-          <h1>স্বাগতম! 👋</h1>
-          <p class="landing-sub">তোমার ইউজারনেম এবং পাসওয়ার্ড দাও</p>
-          <div class="landing-input-group">
-            <label>ইউজারনেম</label>
-            <input type="text" class="landing-input" id="landing-username" placeholder="username">
+      <nav class="landing-nav-links">
+        <button class="landing-nav-link active" onclick="document.getElementById('search-anchor')?.scrollIntoView({behavior:'smooth'})"><i class="fas fa-search"></i> রুট খুঁজুন</button>
+        <button class="landing-nav-link" onclick="document.getElementById('calc-anchor')?.scrollIntoView({behavior:'smooth'})"><i class="fas fa-calculator"></i> হাফ পাস ক্যালকুলেটর</button>
+        <button class="landing-nav-link" onclick="showPage('routes')"><i class="fas fa-route"></i> সকল রুট (${routes.length||'১৫৪+'})</button>
+        <button class="landing-nav-link" onclick="showPage('buses')"><i class="fas fa-bus"></i> সকল বাস (${buses.length||'৭৭৯+'})</button>
+      </nav>
+      <div class="landing-nav-actions">
+        <button class="nav-btn-portal login" onclick="showAuth()"><i class="fas fa-sign-in-alt"></i> লগইন / অ্যাকাউন্ট</button>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="landing-hero" id="search-anchor">
+      <div class="landing-hero-badge">
+        <span class="badge-dot"></span>
+        <span>🇧🇩 বাংলাদেশের সর্ববৃহৎ বাস রুট ও রিয়েলটাইম ভাড়া প্ল্যাটফর্ম</span>
+      </div>
+      
+      <h1 class="landing-hero-title">
+        ঢাকা সিটি ও সারা বাংলাদেশের বাস রুট<br>
+        <span class="hero-gradient-text">এক ক্লিকেই খুঁজুন</span>
+      </h1>
+      
+      <p class="landing-hero-subtitle">
+        ঢাকা সিটির সকল অভ্যন্তরীণ রুট থেকে শুরু করে ৬৪ জেলার দূরপাল্লার আরামদায়ক বাস সার্ভিস। বর্তমান বিআরটিএ (BRTA) নির্ধারিত ভাড়ার তালিকা ও শিক্ষার্থীদের জন্য ৫০% হাফ পাস ক্যালকুলেশন সুবিধা।
+      </p>
+
+      <!-- Interactive Search Box -->
+      <div class="hero-search-card">
+        <div class="hero-cat-tabs">
+          <button class="hero-cat-btn active" data-cat="all" onclick="filterHeroCategory('all', this)"><i class="fas fa-globe"></i> সকল রুট</button>
+          <button class="hero-cat-btn" data-cat="dhaka_city" onclick="filterHeroCategory('dhaka_city', this)"><i class="fas fa-city"></i> ঢাকা সিটি বাস</button>
+          <button class="hero-cat-btn" data-cat="intercity" onclick="filterHeroCategory('intercity', this)"><i class="fas fa-road"></i> ইন্টারসিটি</button>
+          <button class="hero-cat-btn" data-cat="long_route" onclick="filterHeroCategory('long_route', this)"><i class="fas fa-map-marked-alt"></i> দূরপাল্লা ও জেলা রুট</button>
+        </div>
+
+        <div class="hero-search-inputs-grid">
+          <div class="hero-input-field">
+            <i class="fas fa-map-marker-alt from-icon"></i>
+            <input type="text" id="hero-from" class="hero-input-box" placeholder="কোথা থেকে? (যেমন: মিরপুর ১০, উত্তরা, ঢাকা, মহাখালী)" autocomplete="off">
           </div>
-          <div class="landing-input-group">
-            <label>পাসওয়ার্ড</label>
-            <div class="landing-password-wrap">
-              <input type="password" class="landing-input" id="landing-password" placeholder="••••••••">
-              <span class="landing-eye" onclick="toggleLandingPassword()">👁</span>
+          
+          <button class="hero-swap-button" id="hero-swap" onclick="swapLandingSearch()" title="স্থান অদলবদল করুন">
+            <i class="fas fa-exchange-alt"></i>
+          </button>
+
+          <div class="hero-input-field">
+            <i class="fas fa-flag-checkered to-icon"></i>
+            <input type="text" id="hero-to" class="hero-input-box" placeholder="কোথায় যাবেন? (যেমন: মতিঝিল, চট্টগ্রাম, সিলেট, খুলনা)" autocomplete="off">
+          </div>
+
+          <button class="hero-submit-btn" onclick="executeLandingSearch()">
+            <i class="fas fa-search"></i> <span>রুট খুঁজুন</span>
+          </button>
+        </div>
+
+        <!-- Quick Shortcut Pills -->
+        <div class="hero-shortcuts">
+          <span class="hero-shortcut-label"><i class="fas fa-fire" style="color:#fd79a8"></i> জনপ্রিয় রুট:</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('মিরপুর ১০', 'মতিঝিল')">মিরপুর ১০ ⇄ মতিঝিল</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('উত্তরা', 'মতিঝিল')">উত্তরা ⇄ মতিঝিল</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('ঢাকা', 'চট্টগ্রাম')">ঢাকা ⇄ চট্টগ্রাম</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('ঢাকা', 'কক্সবাজার')">ঢাকা ⇄ কক্সবাজার</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('ঢাকা', 'সিলেট')">ঢাকা ⇄ সিলেট</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('ঢাকা', 'রাজশাহী')">ঢাকা ⇄ রাজশাহী</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('গাবতলী', 'সাভার')">গাবতলী ⇄ সাভার</span>
+          <span class="hero-shortcut-pill" onclick="setLandingSearch('কুড়িল বিশ্বরোড', 'চিটাগাং রোড')">কুড়িল ⇄ চিটাগাং রোড</span>
+        </div>
+      </div>
+
+      <!-- Hero Search Results Container -->
+      <div class="hero-search-results" id="hero-search-results">
+        <div class="results-header-bar">
+          <div class="results-title"><i class="fas fa-star" style="color:#fdcb6e"></i> নির্বাচিত জনপ্রিয় রুটসমূহ</div>
+          <button class="view-all" onclick="showPage('routes')">সকল ${routes.length||'১৫৪+'}টি রুট দেখুন <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div id="hero-results-list">
+          ${renderLandingRouteCards(samplePopular)}
+        </div>
+      </div>
+    </section>
+
+    <!-- Fare Calculator & Student 50% Half Pass Section -->
+    <section class="landing-calc-section" id="calc-anchor">
+      <div class="portal-section-header">
+        <span class="section-tag">BRTA APPROVED FARE CALCULATOR</span>
+        <h2>স্মার্ট বাস ভাড়া ও হাফ পাস ক্যালকুলেটর</h2>
+        <p>বর্তমান সরকারি গেজেট ও বিআরটিএ নীতিমালা অনুযায়ী প্রতি কিলোমিটার ভিত্তিক বাস ভাড়া এবং শিক্ষার্থীদের জন্য ৫০% হাফ পাসের সঠিক হিসেব</p>
+      </div>
+
+      <div class="calc-widget-split">
+        <div class="calc-left-form">
+          <div class="calc-form-group">
+            <label><i class="fas fa-road" style="color:#00cec9"></i> ভ্রমণের দূরত্ব (কিলোমিটার)</label>
+            <input type="number" id="landing-calc-dist" class="calc-input" placeholder="যেমন: ১২ অথবা ৩০০" value="15" min="1" oninput="calcLandingFare()">
+          </div>
+
+          <div class="calc-grid-2">
+            <div class="calc-form-group">
+              <label><i class="fas fa-layer-group" style="color:#a29bfe"></i> রুটের ধরন</label>
+              <select id="landing-calc-cat" class="calc-select" onchange="calcLandingFare()">
+                <option value="dhaka_city">ঢাকা ও চট্টগ্রাম সিটি (২.৪৫ ৳/কি.মি)</option>
+                <option value="dtca">ডিটিসিএ এলাকা (২.৪০ ৳/কি.মি)</option>
+                <option value="intercity">ইন্টারসিটি রুট (২.১৫ ৳/কি.মি)</option>
+                <option value="long_route">দূরপাল্লা / আন্তঃজেলা (২.১৫ ৳/কি.মি)</option>
+              </select>
+            </div>
+            
+            <div class="calc-form-group">
+              <label><i class="fas fa-snowflake" style="color:#7ab8ff"></i> বাসের ধরন</label>
+              <select id="landing-calc-type" class="calc-select" onchange="calcLandingFare()">
+                <option value="non_ac">নন-এসি সাধারণ বাস</option>
+                <option value="ac">এসি চেয়ার কোচ (+৬০%)</option>
+                <option value="sleeper">ডিলাক্স স্লিপার কোচ (+১১০%)</option>
+              </select>
             </div>
           </div>
-          <button class="landing-login-btn" onclick="handleLandingLogin()">
-            লগইন করো
+
+          <!-- Student Discount 50% Switch -->
+          <div class="student-toggle-box">
+            <div class="student-toggle-info">
+              <div class="student-toggle-icon"><i class="fas fa-graduation-cap"></i></div>
+              <div class="student-toggle-text">
+                <h4>শিক্ষার্থী হাফ পাস (Student 50% Off)</h4>
+                <p>ছাত্র/ছাত্রীদের জন্য নির্ধারিত সরকারি ৫০% ভাড়া ছাড়</p>
+              </div>
+            </div>
+            <label class="switch-ui">
+              <input type="checkbox" id="landing-student-toggle" onchange="calcLandingFare()">
+              <span class="slider-round"></span>
+            </label>
+          </div>
+
+          <button class="hero-submit-btn" style="width:100%;justify-content:center;margin-top:8px" onclick="calcLandingFare()">
+            <i class="fas fa-calculator"></i> তাৎক্ষণিক ভাড়া হিসেব করুন
           </button>
-          <div class="landing-register">
-            নতুন এখানে? <span onclick="showAuthReg()">সাইনআপ করো</span>
-          </div>
         </div>
-        <div class="landing-demo-boxes">
-          <div class="landing-demo-box" onclick="fillDemo('user')">
-            <small>ইউজার ডেমো</small>
-            user / user123
+
+        <!-- Right Side Live Price Preview -->
+        <div class="calc-right-result" id="landing-calc-result-box">
+          <div style="font-size:13px;color:#8c96ac;font-weight:600;letter-spacing:1px">আনুমানিক যাত্রী ভাড়া</div>
+          <div class="result-big-price" id="calc-preview-price">৳৩৭</div>
+          <div id="calc-student-saving-container" style="display:none">
+            <span class="student-saving-badge"><i class="fas fa-check-circle"></i> শিক্ষার্থী হিসেবে সাশ্রয়: <strong id="calc-saved-amount">৳১৯</strong></span>
           </div>
-          <div class="landing-demo-box" onclick="fillDemo('admin')">
-            <small>অ্যাডমিন ডেমো</small>
-            admin / admin123
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;text-align:left;font-size:12px;color:#a0aec0;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px">
+            <div><strong>বেস রেট:</strong> <span id="calc-preview-rate">৳২.৪৫</span> / কি.মি</div>
+            <div><strong>সর্বনিম্ন ভাড়া:</strong> ৳১০ (হাফ পাস ৳৫)</div>
+            <div><strong>দূরত্ব চার্জ:</strong> <span id="calc-preview-dist-charge">৳৩৬.৭৫</span></div>
+            <div><strong>পিক আওয়ার:</strong> স্বাভাবিক সময়</div>
+          </div>
+          <div style="margin-top:14px;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:11px;color:#8c96ac">
+            * বিআরটিএ কর্তৃক অনুমোদিত ভাড়া নির্দেশিকা অনুযায়ী হালনাগাদকৃত।
           </div>
         </div>
       </div>
-    </div>
-    <div class="landing-footer">
-      © 2026 <span class="footer-brand">গন্তব্য BD</span> • Developed By <span class="footer-brand">Sams Alif</span>
-    </div>
+    </section>
+
+    <!-- Live Statistics Counter Grid -->
+    <section class="portal-stats-section" id="stats-anchor">
+      <div class="portal-stats-grid">
+        <div class="portal-stat-card">
+          <div class="stat-icon-wrap blue"><i class="fas fa-route"></i></div>
+          <div class="stat-number">${routes.length||'১৫৪+'}</div>
+          <div class="stat-label">সক্রিয় বাস রুট (ঢাকা ও জেলা)</div>
+        </div>
+        <div class="portal-stat-card">
+          <div class="stat-icon-wrap green"><i class="fas fa-bus"></i></div>
+          <div class="stat-number">${buses.length||'৭৭৯+'}</div>
+          <div class="stat-label">তালিকাভুক্ত বাস ও কোচ</div>
+        </div>
+        <div class="portal-stat-card">
+          <div class="stat-icon-wrap purple"><i class="fas fa-building"></i></div>
+          <div class="stat-number">${operators.length||'৪৬'}টি</div>
+          <div class="stat-label">শীর্ষ পরিবহন অপারেটর</div>
+        </div>
+        <div class="portal-stat-card">
+          <div class="stat-icon-wrap pink"><i class="fas fa-percent"></i></div>
+          <div class="stat-number">৫০%</div>
+          <div class="stat-label">শিক্ষার্থী হাফ পাস সুবিধা</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Operators Showcase -->
+    <section class="landing-hero" id="operators-anchor" style="padding-top:20px;padding-bottom:20px">
+      <div class="portal-section-header" style="margin-bottom:16px">
+        <span class="section-tag">TOP OPERATORS</span>
+        <h2>বাংলাদেশের জনপ্রিয় বাস সার্ভিসসমূহ</h2>
+        <p>ঢাকা শহরের লোকাল বাস ও দূরপাল্লার শীর্ষ এসি, নন-এসি এবং স্লিপার পরিবহন অপারেটর</p>
+      </div>
+      <div class="operators-pill-grid">
+        ${renderOperatorChips()}
+      </div>
+    </section>
+
+    <!-- BRTA Guidelines & Notice -->
+    <section class="brta-guideline-box">
+      <div class="brta-icon-circle"><i class="fas fa-shield-alt"></i></div>
+      <div class="brta-text">
+        <h3>সরকারি বিআরটিএ বাস ভাড়া নীতিমালা ও হাফ পাস নোটিশ</h3>
+        <p>
+          ঢাকা ও চট্টগ্রাম মহানগরীতে ডিজেল চালিত বাসে প্রতি কি.মি যাত্রী প্রতি ভাড়া ২.৪৫ টাকা এবং সর্বনিম্ন ভাড়া ১০ টাকা। শিক্ষার্থীদের জন্য বৈধ পরিচয়পত্র প্রদর্শনে ৫০% হাফ পাস বাধ্যতামূলক (সর্বনিম্ন ৫ টাকা)। দূরপাল্লায় প্রতি কি.মি সাধারণ বাস ভাড়া ২.১৫ টাকা। বাড়তি ভাড়া আদায় আইনত দণ্ডনীয়।
+        </p>
+      </div>
+    </section>
+
+    <!-- Quick Access / Demo Login Footer Banner -->
+    <section class="portal-quick-auth">
+      <div class="auth-cta-text">
+        <h3>পছন্দের রুট সেভ ও লাইভ আপডেট পেতে চান?</h3>
+        <p>কোনো পাসওয়ার্ড মনে না থাকলে এক ক্লিকেই ডেমো একাউন্টে লগইন করে সকল ফিচার ব্যবহার করুন</p>
+      </div>
+      <div class="auth-demo-btns">
+        <button class="demo-quick-btn" onclick="directDemoLogin('user')"><i class="fas fa-user"></i> ইউজার ডেমো লগইন</button>
+        <button class="demo-quick-btn" onclick="directDemoLogin('admin')"><i class="fas fa-user-shield"></i> অ্যাডমিন ডেমো লগইন</button>
+        <button class="nav-btn-portal login" onclick="showAuth()"><i class="fas fa-sign-in-alt"></i> নিজস্ব লগইন</button>
+      </div>
+    </section>
+
+    <!-- Portal Footer -->
+    <footer style="text-align:center;padding:30px 20px;color:#718096;font-size:13px;border-top:1px solid rgba(255,255,255,0.06)">
+      <p style="margin-bottom:6px">© 2026 <strong>গন্তব্য BD (GontoboddhBD)</strong> — বাংলাদেশের পূর্ণাঙ্গ বাস ট্রাভেল ও রুট ইনফরমেশন সিস্টেম</p>
+      <p style="font-size:11px;letter-spacing:1px;opacity:0.6">DESIGNED & DEVELOPED BY <strong>SAMS ALIF</strong></p>
+    </footer>
   </div>`;
+
   qsa('.nav-item').forEach(b => b.classList.remove('active'));
   qs(`.nav-item[data-page="home"]`)?.classList.add('active');
+
+  // Bind autocomplete to hero inputs
   setTimeout(() => {
-    const uf = $('landing-username');
-    const pf = $('landing-password');
-    if (uf) uf.addEventListener('keydown', e => { if (e.key === 'Enter' && pf) pf.focus(); });
-    if (pf) pf.addEventListener('keydown', e => { if (e.key === 'Enter') handleLandingLogin(); });
+    const fIn = $('hero-from');
+    const tIn = $('hero-to');
+    if (fIn) {
+      fIn.addEventListener('input', debounce(e => acSuggest(e, 'from'), 200));
+      fIn.addEventListener('keydown', e => { if (e.key === 'Enter') { if (tIn && !tIn.value) tIn.focus(); else executeLandingSearch(); } });
+    }
+    if (tIn) {
+      tIn.addEventListener('input', debounce(e => acSuggest(e, 'to'), 200));
+      tIn.addEventListener('keydown', e => { if (e.key === 'Enter') executeLandingSearch(); });
+    }
+    calcLandingFare();
   }, 100);
 }
+
+function renderLandingRouteCards(list) {
+  if (!list || !list.length) {
+    return `<div style="text-align:center;padding:30px;background:rgba(255,255,255,0.03);border-radius:18px;color:#8c96ac">কোনো রুট পাওয়া যায়নি</div>`;
+  }
+  return list.map(r => {
+    const minFare = r.fareRange?.min || Math.round(r.distance * 2.45);
+    const maxFare = r.fareRange?.max || Math.round(r.distance * 2.45 * 1.3);
+    const studentHalfPass = Math.max(5, Math.round(minFare * 0.5));
+    const busCount = r.buses?.length || 5;
+    const trafficLabel = r.trafficStatus === 'high' ? 'উচ্চ জ্যাম' : r.trafficStatus === 'medium' ? 'মাঝারি' : 'স্বাভাবিক ট্রাফিক';
+    const trafficColor = r.trafficStatus === 'high' ? '#e17055' : r.trafficStatus === 'medium' ? '#fdcb6e' : '#00b894';
+
+    return `
+    <div class="portal-route-card" onclick="showRoute('${r._id}')">
+      <div class="portal-route-top">
+        <div class="portal-route-title">${r.name}</div>
+        <span class="route-badge ${r.category}">${catLabel(r.category)}</span>
+      </div>
+      <div class="portal-route-path">
+        <div class="path-point"><span class="dot green"></span> <span>${r.from}</span></div>
+        <div class="path-line-dash"></div>
+        <div class="path-point"><span class="dot red"></span> <span>${r.to}</span></div>
+      </div>
+      <div class="portal-route-meta">
+        <div class="meta-badges">
+          <span><i class="fas fa-road" style="color:#00cec9"></i> ${r.distance} কি.মি</span>
+          <span><i class="fas fa-clock" style="color:#fdcb6e"></i> ${r.estimatedTime} মিনিট</span>
+          <span><i class="fas fa-bus" style="color:#a29bfe"></i> ${busCount}টি বাস সার্ভিস</span>
+          <span style="color:${trafficColor}"><i class="fas fa-traffic-light"></i> ${trafficLabel}</span>
+        </div>
+        <div class="fare-comparison-pill">
+          <span class="fare-regular">ভাড়া: ৳${minFare}${maxFare !== minFare ? ' - ৳' + maxFare : ''}</span>
+          <span class="fare-student-badge">🎓 হাফ পাস: ৳${studentHalfPass}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderOperatorChips() {
+  const defaultOps = [
+    'গ্রীন লাইন পরিবহন', 'সোহাগ পরিবহন', 'হানিফ এন্টারপ্রাইজ', 'শ্যামলী এন আর ট্রাভেলস',
+    'সেন্টমার্টিন ট্রাভেলস', 'এনা ট্রান্সপোর্ট', 'দেশ ট্রাভেলস', 'তুরাগ পরিবহন',
+    'বিকাশ পরিবহন', 'বিহঙ্গ পরিবহন', 'প্রজাপতি পরিবহন', 'তরঙ্গ হিল্লোল',
+    'শিকড় পরিবহন', 'রাইদা এন্টারপ্রাইজ', 'অনাবিল সুপার', 'স্বাধীন এক্সপ্রেস',
+    'পল্লী বন্ধু পরিবহন', 'লাব্বাইক পরিবহন', 'আল-মক্কা পরিবহন', 'দিশারী পরিবহন'
+  ];
+  const list = operators.length ? operators.map(o => o.name) : defaultOps;
+  return list.slice(0, 20).map(name =>
+    `<div class="operator-chip-card" onclick="searchByOperator('${name}')"><i class="fas fa-bus-alt" style="color:#00cec9"></i> ${name}</div>`
+  ).join('');
+}
+
+window.searchByOperator = function(name) {
+  showPage('buses');
+  setTimeout(() => {
+    const input = $('bus-search');
+    if (input) {
+      input.value = name;
+      filterBusName(name);
+    }
+  }, 100);
+};
+
+window.filterHeroCategory = function(cat, btn) {
+  _heroCategoryFilter = cat;
+  qsa('.hero-cat-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  executeLandingSearch();
+};
+
+window.swapLandingSearch = function() {
+  const f = $('hero-from');
+  const t = $('hero-to');
+  if (f && t) {
+    [f.value, t.value] = [t.value, f.value];
+    if (f.value || t.value) executeLandingSearch();
+  }
+};
+
+window.setLandingSearch = function(from, to) {
+  const f = $('hero-from');
+  const t = $('hero-to');
+  if (f) f.value = from;
+  if (t) t.value = to;
+  executeLandingSearch();
+  document.getElementById('search-anchor')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+window.executeLandingSearch = async function() {
+  const fromVal = $('hero-from')?.value?.trim();
+  const toVal = $('hero-to')?.value?.trim();
+  const resContainer = $('hero-results-list');
+  if (!resContainer) return;
+
+  if (!fromVal && !toVal) {
+    let filtered = routes;
+    if (_heroCategoryFilter !== 'all') {
+      filtered = routes.filter(r => r.category === _heroCategoryFilter);
+    }
+    resContainer.innerHTML = renderLandingRouteCards(filtered.slice(0, 8));
+    return;
+  }
+
+  resContainer.innerHTML = `<div style="text-align:center;padding:30px;color:#00cec9"><i class="fas fa-spinner fa-spin fa-2x"></i><p style="margin-top:10px;font-size:14px">রুট অনুসন্ধান করা হচ্ছে...</p></div>`;
+
+  try {
+    let searchUrl = '';
+    if (fromVal && toVal) {
+      searchUrl = `${API}/routes/search/from/${encodeURIComponent(fromVal)}/to/${encodeURIComponent(toVal)}`;
+    } else {
+      const q = fromVal || toVal;
+      searchUrl = `${API}/routes?search=${encodeURIComponent(q)}`;
+    }
+
+    const r = await fetch(searchUrl);
+    const d = await r.json();
+
+    if (d.success) {
+      let matched = d.routes || [];
+      if (_heroCategoryFilter !== 'all') {
+        matched = matched.filter(rt => rt.category === _heroCategoryFilter);
+      }
+      if (matched.length > 0) {
+        resContainer.innerHTML = renderLandingRouteCards(matched);
+        showToast(`${matched.length}টি রুট পাওয়া গেছে!`, 'success');
+      } else if (d.transits && d.transits.length > 0) {
+        resContainer.innerHTML = `
+        <div style="background:rgba(253,203,110,0.1);border:1px solid rgba(253,203,110,0.25);border-radius:18px;padding:20px;margin-bottom:14px">
+          <h4 style="color:#fdcb6e;margin-bottom:10px;font-size:16px"><i class="fas fa-exchange-alt"></i> সরাসরি কোনো রুট পাওয়া যায়নি — ট্রানজিট সংযোগ দেখুন</h4>
+          ${d.transits.map(tr => `
+            <div style="background:rgba(0,0,0,0.2);padding:14px;border-radius:12px;margin-bottom:10px;font-size:13px">
+              <div><strong>১ম রুট:</strong> ${tr.firstRoute.name} (${tr.firstRoute.from} → ${tr.firstRoute.to})</div>
+              <div style="color:#00cec9;margin:6px 0"><i class="fas fa-arrow-down"></i> ট্রানজিট পয়েন্ট: <strong>${tr.interchangeStop}</strong> এ নামুন</div>
+              <div><strong>২য় রুট:</strong> ${tr.secondRoute.name} (${tr.secondRoute.from} → ${tr.secondRoute.to})</div>
+              <div style="margin-top:8px;font-size:12px;opacity:.7">মোট দূরত্ব: ${tr.totalDistance} কি.মি | সময়: ${tr.totalTime} মিনিট</div>
+            </div>`).join('')}
+        </div>`;
+        showToast('সরাসরি রুট নেই, ট্রানজিট সুপারিশ দেখানো হয়েছে', 'info');
+      } else {
+        resContainer.innerHTML = `
+        <div style="text-align:center;padding:40px 20px;background:rgba(255,255,255,0.03);border-radius:20px">
+          <i class="fas fa-search-location" style="font-size:42px;color:#a0aec0;margin-bottom:14px;opacity:0.5"></i>
+          <h3 style="font-size:18px;margin-bottom:6px">কোনো নির্দিষ্ট রুট পাওয়া যায়নি</h3>
+          <p style="font-size:13px;color:#8c96ac">বানান পরীক্ষা করুন অথবা কাছাকাছি প্রধান স্টপেজের নাম দিয়ে খুঁজুন</p>
+        </div>`;
+        showToast('কোনো রুট পাওয়া যায়নি', 'warning');
+      }
+    }
+  } catch(e) {
+    resContainer.innerHTML = `<div style="text-align:center;padding:20px;color:#e17055">অনুসন্ধানে সমস্যা হয়েছে</div>`;
+  }
+};
+
+window.calcLandingFare = async function() {
+  const dist = parseFloat($('landing-calc-dist')?.value) || 15;
+  const cat = $('landing-calc-cat')?.value || 'dhaka_city';
+  const type = $('landing-calc-type')?.value || 'non_ac';
+  const isStudent = $('landing-student-toggle')?.checked || false;
+
+  try {
+    const r = await fetch(`${API}/fares/calculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ distance: dist, category: cat, busType: type, isStudent })
+    });
+    const d = await r.json();
+
+    if (d.success) {
+      const pEl = $('calc-preview-price');
+      const rateEl = $('calc-preview-rate');
+      const distChEl = $('calc-preview-dist-charge');
+      const saveBox = $('calc-student-saving-container');
+      const saveAmt = $('calc-saved-amount');
+
+      if (pEl) pEl.textContent = `৳${d.fare}`;
+      if (rateEl) rateEl.textContent = `৳${d.breakdown.baseRate}`;
+      if (distChEl) distChEl.textContent = `৳${d.breakdown.distanceCharge}`;
+
+      if (isStudent && d.studentDiscount > 0) {
+        if (saveBox) saveBox.style.display = 'block';
+        if (saveAmt) saveAmt.textContent = `৳${d.studentDiscount}`;
+      } else {
+        if (saveBox) saveBox.style.display = 'none';
+      }
+    }
+  } catch(e) {}
+};
+
+window.directDemoLogin = async function(role) {
+  const username = role === 'admin' ? 'admin' : 'user';
+  const password = role === 'admin' ? 'admin123' : 'user123';
+  showToast(`${role === 'admin' ? 'অ্যাডমিন' : 'ইউজার'} লগইন করা হচ্ছে...`, 'info');
+  try {
+    const r = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const d = await r.json();
+    if (d.success) {
+      localStorage.setItem('gbd_token', d.token);
+      user = d.user;
+      favs = d.user.favorites || [];
+      updateUI();
+      document.body.classList.remove('landing-active');
+      showPage('home');
+      showToast('লগিন সফল! ড্যাশবোর্ডে স্বাগতম', 'success');
+    } else {
+      showToast('লগইন ব্যর্থ হয়েছে', 'error');
+    }
+  } catch(e) {
+    showToast('সার্ভার কানেকশন ত্রুটি', 'error');
+  }
+};
 
 window.handleLandingLogin = async function() {
   const username = $('landing-username')?.value?.trim();
   const password = $('landing-password')?.value?.trim();
   if (!username || !password) return showToast('ইউজারনেম ও পাসওয়ার্ড দিন', 'warning');
-  const btn = document.querySelector('.landing-login-btn');
-  if (btn) { btn.textContent = 'লগইন হচ্ছে...'; btn.disabled = true; }
   try {
     const r = await fetch(API + '/auth/login', {
       method: 'POST',
@@ -352,24 +746,19 @@ window.handleLandingLogin = async function() {
       showToast(d.message || 'ভুল ইউজারনেম বা পাসওয়ার্ড', 'error');
     }
   } catch(e) {
-    showToast('কানেকশন ত্রুটি — সার্ভার চালু আছে কি?', 'error');
+    showToast('কানেকশন ত্রুটি', 'error');
   }
-  if (btn) { btn.textContent = 'লগইন করো'; btn.disabled = false; }
 };
 
 window.fillDemo = function(type) {
-  const u = $('landing-username');
-  const p = $('landing-password');
-  if (!u || !p) return;
-  if (type === 'admin') { u.value = 'admin'; p.value = 'admin123'; }
-  else { u.value = 'user'; p.value = 'user123'; }
-  showToast('ইউজারনেম ও পাসওয়ার্ড বসানো হয়েছে — লগইন বাটনে ক্লিক করুন', 'info');
+  directDemoLogin(type);
 };
 
 window.toggleLandingPassword = function() {
   const p = $('landing-password');
   if (p) p.type = p.type === 'password' ? 'text' : 'password';
 };
+
 
 // ================ DASHBOARD ================
 let _cachedNotifs = [];
@@ -720,6 +1109,9 @@ function showPage(page) {
     const busTypes = [...new Set(buses.map(b => b.type))];
     html = `<div style="padding-top:0">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3 style="font-size:17px;font-weight:600">সকল বাস (${buses.length})</h3></div>
+      <div style="margin-bottom:14px;position:relative">
+        <input type="text" id="bus-search" placeholder="🔍 বাসের নাম লিখুন..." oninput="debounceBusSearch(this.value)" style="width:100%;padding:12px 16px;border-radius:14px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:14px;font-family:inherit;outline:none">
+      </div>
       <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
         <button onclick="filterBusType('all')" class="route-badge" style="cursor:pointer;padding:6px 14px;font-size:12px;background:var(--card-bg);border:1px solid var(--border)">সব</button>
         ${busTypes.map(t => `<button onclick="filterBusType('${t}')" class="route-badge ${t}" style="cursor:pointer;padding:6px 14px;font-size:12px;background:var(--card-bg);border:1px solid var(--border);text-transform:capitalize">${t.replace(/_/g,' ')}</button>`).join('')}
@@ -797,7 +1189,7 @@ function renderAllBuses() {
   c.innerHTML = buses.map(b => {
     const route = routes.find(r => r._id === b.route);
     const fromTo = route ? `${route.from} → ${route.to}` : '';
-    return `<div class="bus-card" onclick="showBusDetail('${b._id}')">
+    return `<div class="bus-card" onclick="showBusDetail('${b._id}')" data-en="${(b.en||'').replace(/"/g,'&quot;')}">
       <span class="bus-badge ${b.type}" style="display:inline-block;margin-bottom:4px">${b.type.replace(/_/g,' ').toUpperCase()}</span>
       <div class="bus-name" style="font-size:14px">${b.name}</div>
       <div class="bus-op" style="font-size:11px">${b.operator||''}</div>
@@ -806,6 +1198,22 @@ function renderAllBuses() {
     </div>`;
   }).join('');
 }
+
+let _busSearchTimer = null;
+window.debounceBusSearch = function(val) {
+  clearTimeout(_busSearchTimer);
+  _busSearchTimer = setTimeout(() => filterBusName(val), 250);
+};
+
+window.filterBusName = function(val) {
+  const cards = qsa('.bus-card');
+  const q = val.trim().toLowerCase();
+  cards.forEach(c => {
+    const name = c.querySelector('.bus-name')?.textContent?.toLowerCase() || '';
+    const en = c.dataset?.en?.toLowerCase() || '';
+    c.style.display = !q || name.includes(q) || en.includes(q) ? '' : 'none';
+  });
+};
 
 window.showBusDetail = async function(id) {
   await showBus(id);

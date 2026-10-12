@@ -62,15 +62,21 @@ router.post('/calculate', async (req, res) => {
     }
 
     // 7. Student discount (50% of total fare)
+    const regularFare = Math.round(fare);
     let studentDiscount = 0;
     if (isStudent) {
       studentDiscount = fare * 0.5;
       fare -= studentDiscount;
+      const studentMin = category === 'dhaka_city' ? 5 : Math.round(minFare * 0.5);
+      if (fare < studentMin) fare = studentMin;
     }
 
     res.json({
       success: true,
       fare: Math.round(fare),
+      regularFare: regularFare,
+      studentFare: Math.round(fare),
+      studentDiscount: Math.round(studentDiscount),
       breakdown: {
         baseRate: fareRule.perKmRate,
         distanceCharge: Math.round(distanceCharge),

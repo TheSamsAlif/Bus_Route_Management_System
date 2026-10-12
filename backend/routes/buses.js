@@ -4,11 +4,18 @@ const { Bus, getDb } = require('../../database/mockDb');
 
 router.get('/', async (req, res) => {
   try {
-    const { type, routeId } = req.query;
+    const { type, routeId, search } = req.query;
     const db = getDb();
     let results = db.buses.filter(b => b.isActive !== false);
     if (type) results = results.filter(b => b.type === type);
     if (routeId) results = results.filter(b => b.route === routeId);
+    if (search) {
+      const q = search.toLowerCase();
+      results = results.filter(b =>
+        (b.name || '').toLowerCase().includes(q) ||
+        (b.en || '').toLowerCase().includes(q)
+      );
+    }
     
     const buses = results.map(b => ({
       ...b,
