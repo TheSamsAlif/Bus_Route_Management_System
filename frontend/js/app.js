@@ -251,6 +251,7 @@ function showLanding() {
       <div class="ambient-glow glow-1"></div>
       <div class="ambient-glow glow-2"></div>
       <div class="ambient-glow glow-3"></div>
+      <div class="ambient-glow glow-4"></div>
     </div>
 
     <!-- Portal Navigation Bar -->
@@ -288,6 +289,15 @@ function showLanding() {
       <p class="landing-hero-subtitle">
         ঢাকা সিটির সকল অভ্যন্তরীণ রুট থেকে শুরু করে ৬৪ জেলার দূরপাল্লার আরামদায়ক বাস সার্ভিস। বর্তমান বিআরটিএ (BRTA) নির্ধারিত ভাড়ার তালিকা ও শিক্ষার্থীদের জন্য ৫০% হাফ পাস ক্যালকুলেশন সুবিধা।
       </p>
+
+      <!-- 4K Animated Glass Quick Demo Strip -->
+      <div class="landing-quick-demo-strip">
+        <div class="demo-strip-label"><i class="fas fa-bolt" style="color:#00F2FE"></i> ১-ক্লিক ইনস্ট্যান্ট ডেমো লগইন:</div>
+        <div class="demo-strip-btns">
+          <button class="quick-pill-btn user" onclick="directDemoLogin('user')"><i class="fas fa-user-check"></i> ইউজার ডেমো (user)</button>
+          <button class="quick-pill-btn admin" onclick="directDemoLogin('admin')"><i class="fas fa-crown"></i> অ্যাডমিন ডেমো (admin)</button>
+        </div>
+      </div>
 
       <!-- Interactive Search Box -->
       <div class="hero-search-card">
@@ -779,13 +789,14 @@ function showDashboard() {
   const totalBuses = buses.length;
   const totalFavs = myF.length;
   const urgentNotifs = _cachedNotifs.filter(n => n.type === 'urgent');
+  const complaints = getLocalComplaints();
 
   el.main.innerHTML = `
   <div style="padding-top:0">
     <div class="dash-greeting">
       <div class="av">${(user?.name||user?.username||'U').charAt(0).toUpperCase()}</div>
-      <h2>স্বাগতম, ${user?.name||user?.username||'যাত্রী'}! 👋</h2>
-      <p>@${user?.username||''} ${user?.role==='admin'?'👑 অ্যাডমিন':'• যাত্রী'}</p>
+      <h2>স্বাগতম, ${user?.name||user?.username||'সম্মানিত যাত্রী'}! 👋</h2>
+      <p>@${user?.username||''} ${user?.role==='admin'?'👑 অ্যাডমিন':'• স্মার্ট বাস যাত্রী'}</p>
     </div>
 
     ${urgentNotifs.length ? `<div style="margin-bottom:12px">
@@ -800,6 +811,35 @@ function showDashboard() {
       </div>`).join('')}
     </div>` : ''}
 
+    <!-- 1. FEATURE: Digital Student Transit Pass Card -->
+    <div class="student-pass-card">
+      <div class="pass-header">
+        <div class="pass-title-box">
+          <h3><i class="fas fa-graduation-cap" style="color:#00F2FE"></i> ডিজিটাল শিক্ষার্থী হাফ পাস কার্ড</h3>
+          <p>BRTA APPROVED STUDENT TRANSIT PASS • ২০২৬</p>
+        </div>
+        <div class="pass-seal">৫০% হাফ পাস সক্রিয়</div>
+      </div>
+      <div class="pass-body">
+        <div class="pass-avatar">${(user?.name||user?.username||'S').charAt(0).toUpperCase()}</div>
+        <div class="pass-details">
+          <h4>${user?.name||user?.username||'ছাত্র/ছাত্রী'}</h4>
+          <p><i class="fas fa-id-card"></i> আইডি: <strong>PASS-${(user?.username||'1024').toUpperCase()}</strong></p>
+          <p><i class="fas fa-check-circle" style="color:#00cec9"></i> ঢাকা ও আন্তঃজেলা সকল নন-এসি বাসে প্রযোজ্য</p>
+        </div>
+        <div class="pass-qr-box" title="ডিজিটাল ভেরিফিকেশন কোড">
+          <i class="fas fa-qrcode"></i>
+        </div>
+      </div>
+      <div class="pass-footer">
+        <span>মেয়াদ: ৩১ ডিসেম্বর ২০২৬ পর্যন্ত</span>
+        <div class="pass-actions">
+          <button class="pass-btn primary" onclick="showStudentPassModal()"><i class="fas fa-expand-alt"></i> কন্ডাক্টরকে দেখান</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Glass Grid -->
     <div class="panel-stat-grid">
       <div class="panel-stat"><div class="num">${totalRoutes}</div><div class="lbl">সকল রুট</div></div>
       <div class="panel-stat"><div class="num">${totalFavs}</div><div class="lbl">পছন্দের রুট</div></div>
@@ -809,26 +849,95 @@ function showDashboard() {
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
       <div class="panel-glass" style="cursor:pointer;text-align:center;padding:18px 12px;margin-bottom:0" onclick="showPage('routes')">
-        <div style="width:40px;height:40px;border-radius:12px;background:rgba(74,140,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><i class="fas fa-route" style="color:#4a8cff;font-size:18px"></i></div>
-        <span style="font-size:13px;font-weight:500">রুট দেখুন</span>
+        <div style="width:40px;height:40px;border-radius:12px;background:rgba(0,242,254,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><i class="fas fa-route" style="color:#00F2FE;font-size:18px"></i></div>
+        <span style="font-size:13px;font-weight:600">রুট দেখুন</span>
       </div>
       <div class="panel-glass" style="cursor:pointer;text-align:center;padding:18px 12px;margin-bottom:0" onclick="showPage('calculator')">
         <div style="width:40px;height:40px;border-radius:12px;background:rgba(122,184,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><i class="fas fa-calculator" style="color:#7ab8ff;font-size:18px"></i></div>
-        <span style="font-size:13px;font-weight:500">ভাড়া ক্যালক</span>
+        <span style="font-size:13px;font-weight:600">ভাড়া ক্যালক</span>
       </div>
       <div class="panel-glass" style="cursor:pointer;text-align:center;padding:18px 12px;margin-bottom:0" onclick="showPage('favorites')">
         <div style="width:40px;height:40px;border-radius:12px;background:rgba(253,121,168,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><i class="fas fa-heart" style="color:#fd79a8;font-size:18px"></i></div>
-        <span style="font-size:13px;font-weight:500">পছন্দ তালিকা</span>
+        <span style="font-size:13px;font-weight:600">পছন্দ তালিকা</span>
       </div>
       <div class="panel-glass" style="cursor:pointer;text-align:center;padding:18px 12px;margin-bottom:0" onclick="showPage('profile')">
         <div style="width:40px;height:40px;border-radius:12px;background:rgba(253,203,110,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><i class="fas fa-user" style="color:#fdcb6e;font-size:18px"></i></div>
-        <span style="font-size:13px;font-weight:500">প্রোফাইল</span>
+        <span style="font-size:13px;font-weight:600">প্রোফাইল</span>
       </div>
     </div>
 
+    <!-- 2. FEATURE: Emergency Transit Helpline Grid -->
+    <div class="panel-glass helpline-section-box">
+      <h3><i class="fas fa-phone-volume" style="color:#eb4d4b"></i> জরুরি ট্রানজিট ও যাত্রী সহায়তা হটলাইন</h3>
+      <div class="helpline-grid">
+        <a href="tel:999" class="helpline-card">
+          <div class="helpline-info">
+            <div class="helpline-icon police"><i class="fas fa-shield-alt"></i></div>
+            <div class="helpline-text">
+              <h4>জাতীয় জরুরি সেবা</h4>
+              <p>পুলিশ / অ্যাম্বুলেন্স</p>
+            </div>
+          </div>
+          <span class="helpline-number">৯৯৯</span>
+        </a>
+        <a href="tel:16107" class="helpline-card">
+          <div class="helpline-info">
+            <div class="helpline-icon brta"><i class="fas fa-bus"></i></div>
+            <div class="helpline-text">
+              <h4>বিআরটিএ হটলাইন</h4>
+              <p>অতিরিক্ত ভাড়া অভিযোগ</p>
+            </div>
+          </div>
+          <span class="helpline-number">১৬১০৭</span>
+        </a>
+        <a href="tel:01713373111" class="helpline-card">
+          <div class="helpline-info">
+            <div class="helpline-icon traffic"><i class="fas fa-traffic-light"></i></div>
+            <div class="helpline-text">
+              <h4>ডিএমপি ট্রাফিক</h4>
+              <p>ঢাকা ট্রাফিক কন্ট্রোল</p>
+            </div>
+          </div>
+          <span class="helpline-number">হটলাইন</span>
+        </a>
+        <a href="tel:109" class="helpline-card">
+          <div class="helpline-info">
+            <div class="helpline-icon women"><i class="fas fa-female"></i></div>
+            <div class="helpline-text">
+              <h4>নারী ও শিশু নিরাপত্তা</h4>
+              <p>২৪/৭ জাতীয় হেল্পলাইন</p>
+            </div>
+          </div>
+          <span class="helpline-number">১০৯</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 3. FEATURE: Passenger Complaint & Lost Property Diary -->
+    <div class="panel-glass complaint-section-box">
+      <h3><i class="fas fa-clipboard-list" style="color:#00F2FE"></i> বাসে অতিরিক্ত ভাড়া বা হারানো মালামাল অভিযোগ ডায়েরি</h3>
+      <form onsubmit="submitPassengerComplaint(event)" style="margin-bottom:14px">
+        <div class="complaint-form-grid">
+          <input class="panel-input" id="comp-bus" placeholder="বাসের নাম (যেমন: বিকাশ, তুরাগ)" required style="margin-bottom:0">
+          <select class="panel-select" id="comp-type" style="margin-bottom:0">
+            <option value="fare_overcharge">অতিরিক্ত ভাড়া দাবি</option>
+            <option value="lost_item">মালামাল হারিয়ে গেছে</option>
+            <option value="half_pass_denied">হাফ পাস নিতে অস্বীকৃতি</option>
+            <option value="misbehavior">কন্ডাক্টরের দুর্ব্যবহার</option>
+          </select>
+        </div>
+        <input class="panel-input" id="comp-desc" placeholder="বিস্তারিত বিবরণ ও স্টপেজের নাম..." required style="margin-top:10px">
+        <button class="panel-btn" type="submit" style="margin-top:6px"><i class="fas fa-paper-plane"></i> অভিযোগ ও রিপোর্ট সংরক্ষণ করুন</button>
+      </form>
+      <div id="complaint-list-container">
+        ${renderPassengerComplaints(complaints)}
+      </div>
+    </div>
+
+    <!-- Favorite Routes -->
     ${myF.length ? `
     <div class="panel-glass" style="margin-bottom:0">
-      <h3 style="margin-bottom:10px">⭐ পছন্দের রুট</h3>
+      <h3 style="margin-bottom:10px"><i class="fas fa-star" style="color:#fdcb6e"></i> ⭐ পছন্দের রুট</h3>
       ${myF.map(r => `
         <div class="route-card" onclick="showRoute('${r._id}')" style="margin-bottom:6px">
           <div class="route-top"><span class="route-name">${r.name}</span><span class="route-badge ${r.category}">${catLabel(r.category)}</span></div>
@@ -836,18 +945,121 @@ function showDashboard() {
         </div>`).join('')}
     </div>` : ''}
 
+    <!-- Popular Routes List -->
     <div class="panel-glass" style="margin-bottom:0">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <h3 style="margin-bottom:0">🚌 জনপ্রিয় রুট</h3>
+        <h3 style="margin-bottom:0"><i class="fas fa-bus" style="color:#4a8cff"></i> জনপ্রিয় রুটসমূহ</h3>
         <button class="view-all" onclick="showPage('routes')">সব দেখুন <i class="fas fa-arrow-right"></i></button>
       </div>
       <div class="route-list" id="dash-routes"></div>
     </div>
+    
     <div style="text-align:center;padding:20px 0;opacity:0.25;font-size:11px;letter-spacing:2px">DEVELOPED BY SAMS ALIF</div>
   </div>`;
+
   const dr = $('dash-routes');
   if (dr) renderRoutes(routes.slice(0,5), dr);
 }
+
+function getLocalComplaints() {
+  try {
+    return JSON.parse(localStorage.getItem('gbd_complaints') || '[]');
+  } catch(e) { return []; }
+}
+
+function renderPassengerComplaints(list) {
+  if (!list || !list.length) {
+    return `<div style="text-align:center;padding:12px;opacity:0.5;font-size:12px">এখনও কোনো অভিযোগ বা রিপোর্ট যুক্ত করা হয়নি</div>`;
+  }
+  const typeMap = {
+    fare_overcharge: 'অতিরিক্ত ভাড়া',
+    lost_item: 'হারানো মালামাল',
+    half_pass_denied: 'হাফ পাস অস্বীকৃতি',
+    misbehavior: 'দুর্ব্যবহার'
+  };
+  return list.map((c, idx) => `
+  <div class="complaint-item-card">
+    <div>
+      <div style="font-weight:700;font-size:13px;color:#fff">${c.bus} — <span style="color:#00cec9">${typeMap[c.type]||c.type}</span></div>
+      <div style="font-size:12px;opacity:0.75;margin-top:2px">${c.desc}</div>
+      <div style="font-size:10px;opacity:0.4;margin-top:4px">${c.time}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="complaint-status-badge pending">দাখিলকৃত</span>
+      <button onclick="deletePassengerComplaint(${idx})" style="background:none;border:none;color:#e17055;cursor:pointer;padding:4px"><i class="fas fa-trash"></i></button>
+    </div>
+  </div>`).join('');
+}
+
+window.submitPassengerComplaint = function(e) {
+  e.preventDefault();
+  const bus = $('comp-bus')?.value?.trim();
+  const type = $('comp-type')?.value;
+  const desc = $('comp-desc')?.value?.trim();
+  if (!bus || !desc) return showToast('বাসের নাম ও বিবরণ দিন', 'warning');
+  
+  const list = getLocalComplaints();
+  list.unshift({
+    bus,
+    type,
+    desc,
+    time: new Date().toLocaleDateString('bn-BD', { hour: '2-digit', minute: '2-digit' }),
+    status: 'pending'
+  });
+  localStorage.setItem('gbd_complaints', JSON.stringify(list));
+  
+  const container = $('complaint-list-container');
+  if (container) container.innerHTML = renderPassengerComplaints(list);
+  $('comp-bus').value = '';
+  $('comp-desc').value = '';
+  showToast('অভিযোগ সফলভাবে সংরক্ষিত হয়েছে!', 'success');
+};
+
+window.deletePassengerComplaint = function(idx) {
+  const list = getLocalComplaints();
+  list.splice(idx, 1);
+  localStorage.setItem('gbd_complaints', JSON.stringify(list));
+  const container = $('complaint-list-container');
+  if (container) container.innerHTML = renderPassengerComplaints(list);
+  showToast('অভিযোগ মুছে ফেলা হয়েছে', 'info');
+};
+
+window.showStudentPassModal = function() {
+  const passHtml = `
+  <div class="detail-card" style="text-align:center;padding:24px 20px;border-radius:22px;background:linear-gradient(135deg,rgba(16,24,52,0.98),rgba(20,32,68,0.95));border:1.5px solid #00F2FE">
+    <div style="display:inline-block;padding:6px 14px;border-radius:20px;background:rgba(0,242,254,0.15);color:#00F2FE;font-size:12px;font-weight:700;margin-bottom:12px">
+      🇧🇩 বিআরটিএ অফিশিয়াল শিক্ষার্থী ট্রানজিট কার্ড
+    </div>
+    <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#7F00FF,#00F2FE);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:32px;color:#fff;font-weight:800;border:3px solid rgba(255,255,255,0.3)">
+      ${(user?.name||user?.username||'S').charAt(0).toUpperCase()}
+    </div>
+    <h2 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:4px">${user?.name||user?.username||'শিক্ষার্থী'}</h2>
+    <p style="font-size:13px;color:#00cec9;font-weight:600;margin-bottom:16px">পাস আইডি: BD-STU-${(user?.username||'2026').toUpperCase()}</p>
+    
+    <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;text-align:left;font-size:13px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>অধিকার:</span> <strong style="color:#00F2FE">৫০% হাফ পাস নিশ্চিত</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>এলাকা:</span> <strong>ঢাকা সিটি ও আন্তঃজেলা</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>সর্বনিম্ন ভাড়া:</span> <strong>৳৫ (সিটি বাস)</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>মেয়াদকাল:</span> <strong style="color:#00b894">২০২৬-২০২৭ সেশন</strong></div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-bottom:16px">
+      <div style="width:100px;height:100px;background:#fff;border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center">
+        <i class="fas fa-qrcode" style="font-size:84px;color:#0a0a1a"></i>
+      </div>
+    </div>
+    
+    <p style="font-size:11px;opacity:0.6;line-height:1.5">
+      * সরকারি প্রজ্ঞাপন অনুযায়ী বাসে পরিচয়পত্র বা এই ডিজিটাল কার্ড প্রদর্শন সাপেক্ষে সকল নন-এসি বাসে ৫০% ভাড়া ছাড় বাধ্যতামূলক।
+    </p>
+    
+    <button onclick="el.modal.classList.remove('active')" style="width:100%;margin-top:14px;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#00F2FE,#4FACFE);color:#0a0a1a;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">
+      বন্ধ করুন
+    </button>
+  </div>`;
+  showModal(passHtml);
+};
+
 
 async function showDashboardWithNotifs() {
   await fetchNotifications();

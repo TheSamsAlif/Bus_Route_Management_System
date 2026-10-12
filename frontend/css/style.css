@@ -566,7 +566,7 @@ body.landing-active {
   z-index: 1;
 }
 
-/* Ambient Background Lights */
+/* Ambient Background Lights - 4K Vibrant Glass Multi-color Orbs */
 .portal-ambient {
   position: fixed;
   inset: 0;
@@ -577,30 +577,53 @@ body.landing-active {
 .ambient-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.35;
-  animation: ambientDrift 10s ease-in-out infinite alternate;
+  filter: blur(110px);
+  opacity: 0.42;
+  will-change: transform;
 }
 .ambient-glow.glow-1 {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, #6C5CE7, #4a8cff);
-  top: -100px; left: -100px;
+  width: 620px; height: 620px;
+  background: radial-gradient(circle, #7F00FF 0%, #E100FF 50%, rgba(79, 172, 254, 0) 70%);
+  top: -120px; left: -100px;
+  animation: ambientFloat1 12s ease-in-out infinite alternate;
 }
 .ambient-glow.glow-2 {
-  width: 450px; height: 450px;
-  background: radial-gradient(circle, #00cec9, #00b894);
-  top: 30%; right: -120px;
-  animation-delay: 3s;
+  width: 580px; height: 580px;
+  background: radial-gradient(circle, #00F2FE 0%, #00cec9 45%, rgba(0, 245, 160, 0) 70%);
+  top: 25%; right: -140px;
+  animation: ambientFloat2 14s ease-in-out infinite alternate;
 }
 .ambient-glow.glow-3 {
-  width: 480px; height: 480px;
-  background: radial-gradient(circle, #fd79a8, #6C5CE7);
-  bottom: 5%; left: 20%;
-  animation-delay: 6s;
+  width: 540px; height: 540px;
+  background: radial-gradient(circle, #FF0844 0%, #FF758C 50%, rgba(255, 177, 153, 0) 70%);
+  bottom: 0%; left: 15%;
+  animation: ambientFloat3 16s ease-in-out infinite alternate;
 }
-@keyframes ambientDrift {
-  0% { transform: translateY(0px) scale(1); }
-  100% { transform: translateY(-40px) scale(1.1); }
+.ambient-glow.glow-4 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #00F5A0 0%, #00cec9 40%, rgba(127, 0, 255, 0) 70%);
+  top: 60%; right: 25%;
+  animation: ambientFloat4 11s ease-in-out infinite alternate;
+}
+@keyframes ambientFloat1 {
+  0% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+  50% { transform: translate(60px, 80px) scale(1.12) rotate(60deg); }
+  100% { transform: translate(-40px, 40px) scale(0.95) rotate(120deg); }
+}
+@keyframes ambientFloat2 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-80px, -60px) scale(1.18); }
+  100% { transform: translate(40px, 60px) scale(0.92); }
+}
+@keyframes ambientFloat3 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(80px, -50px) scale(1.15); }
+  100% { transform: translate(-30px, -90px) scale(1.05); }
+}
+@keyframes ambientFloat4 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-70px, 70px) scale(1.2); }
+  100% { transform: translate(50px, -40px) scale(0.9); }
 }
 
 /* Landing Navigation Header */
@@ -735,46 +758,135 @@ body.light-mode .landing-nav-link:hover { color: #6C5CE7; }
   box-shadow: 0 0 8px #00cec9;
 }
 .landing-hero-title {
-  font-size: 54px;
-  line-height: 1.18;
+  font-size: 56px;
+  line-height: 1.16;
   font-weight: 800;
-  margin-bottom: 18px;
-  letter-spacing: -1.2px;
+  margin-bottom: 20px;
+  letter-spacing: -1.4px;
   color: #fff;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
-body.light-mode .landing-hero-title { color: #1a1a2e; }
+body.light-mode .landing-hero-title { color: #1a1a2e; text-shadow: none; }
 .hero-gradient-text {
-  background: linear-gradient(135deg, #a29bfe 0%, #00cec9 50%, #fd79a8 100%);
+  background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 22%, #A855F7 45%, #EC4899 72%, #FBBF24 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-size: 250% auto;
+  animation: textGradientShift 6s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.3));
+}
+@keyframes textGradientShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 .landing-hero-subtitle {
-  max-width: 780px;
-  margin: 0 auto 36px;
+  max-width: 800px;
+  margin: 0 auto 34px;
   font-size: 17px;
-  line-height: 1.7;
-  color: #b0b8cb;
+  line-height: 1.75;
+  color: #c0c9dc;
 }
 body.light-mode .landing-hero-subtitle { color: #5a647d; }
 
-/* Interactive Search Container */
-.hero-search-card {
-  max-width: 980px;
-  margin: 0 auto 24px;
-  background: rgba(16, 24, 48, 0.75);
-  backdrop-filter: blur(30px);
+/* 4K Animated Glass Quick Demo Strip */
+.landing-quick-demo-strip {
+  max-width: 760px;
+  margin: 0 auto 28px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  flex-wrap: wrap;
+}
+body.light-mode .landing-quick-demo-strip {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+}
+.demo-strip-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #00cec9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.demo-strip-btns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.quick-pill-btn {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 28px;
-  padding: 26px 30px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: all 0.25s;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.quick-pill-btn.user {
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(79, 172, 254, 0.25));
+  color: #00F2FE;
+  border-color: rgba(0, 242, 254, 0.35);
+}
+.quick-pill-btn.user:hover {
+  background: linear-gradient(135deg, #00F2FE, #4FACFE);
+  color: #0a0a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.45);
+}
+.quick-pill-btn.admin {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(168, 85, 247, 0.25));
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+.quick-pill-btn.admin:hover {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #0a0a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.45);
+}
+
+/* 4K Animated Glass Search Container */
+.hero-search-card {
+  max-width: 1020px;
+  margin: 0 auto 24px;
+  background: rgba(15, 23, 49, 0.68);
+  backdrop-filter: blur(36px) saturate(210%);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  border-radius: 30px;
+  padding: 28px 32px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 50px rgba(0, 242, 254, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-search-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00F2FE, #A855F7, #EC4899, transparent);
+  opacity: 0.8;
 }
 .hero-search-card:focus-within {
-  border-color: rgba(0, 206, 201, 0.45);
-  box-shadow: 0 25px 70px rgba(0, 206, 201, 0.15);
+  border-color: rgba(0, 242, 254, 0.5);
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 242, 254, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 body.light-mode .hero-search-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   border-color: rgba(0, 0, 0, 0.1);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
 }
@@ -786,11 +898,11 @@ body.light-mode .hero-search-card {
   flex-wrap: wrap;
 }
 .hero-cat-btn {
-  padding: 8px 18px;
-  border-radius: 20px;
+  padding: 9px 20px;
+  border-radius: 22px;
   font-size: 13px;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
   color: #c0c6d8;
   cursor: pointer;
@@ -800,12 +912,15 @@ body.light-mode .hero-search-card {
 .hero-cat-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 .hero-cat-btn.active {
-  background: linear-gradient(135deg, #6C5CE7, #00cec9);
+  background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 45%, #7F00FF 100%);
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.35);
+  box-shadow: 0 6px 22px rgba(0, 242, 254, 0.4);
+  transform: translateY(-1px);
 }
 body.light-mode .hero-cat-btn {
   background: rgba(0, 0, 0, 0.04);
@@ -1669,3 +1784,302 @@ body.light-mode .notif-item { background: rgba(0,0,0,.02); }
   .landing-demo-box { padding: 14px; font-size: 13px; }
   .landing-footer { padding: 16px 16px 20px; font-size: 13px; }
 }
+
+/* ================ AUTH MODAL DEMO QUICK ACCESS ================ */
+.auth-demo-quick-box {
+  background: rgba(0, 242, 254, 0.05);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(15px);
+}
+.demo-box-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #00cec9;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.demo-btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.modal-demo-btn {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: inherit;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.modal-demo-btn.user {
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.18), rgba(79, 172, 254, 0.28));
+  color: #00F2FE;
+  border-color: rgba(0, 242, 254, 0.35);
+}
+.modal-demo-btn.user:hover {
+  background: linear-gradient(135deg, #00F2FE, #4FACFE);
+  color: #0a0a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+}
+.modal-demo-btn.admin {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(168, 85, 247, 0.28));
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+.modal-demo-btn.admin:hover {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #0a0a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+}
+
+/* ================ USER PASSENGER NEW FEATURES ================ */
+
+/* 1. Digital Student Transit Pass Card */
+.student-pass-card {
+  background: linear-gradient(135deg, rgba(16, 24, 52, 0.95), rgba(30, 42, 78, 0.9));
+  border: 1.5px solid rgba(0, 242, 254, 0.35);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 242, 254, 0.15);
+  backdrop-filter: blur(25px);
+}
+.student-pass-card::before {
+  content: "";
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.08) 0%, transparent 60%);
+  animation: passShine 8s linear infinite;
+  pointer-events: none;
+}
+@keyframes passShine {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.pass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.pass-title-box h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pass-title-box p {
+  font-size: 11px;
+  color: #00cec9;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.pass-seal {
+  background: linear-gradient(135deg, #00F2FE, #00cec9);
+  color: #0a0a1a;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+}
+.pass-body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 1;
+}
+.pass-avatar {
+  width: 60px; height: 60px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #7F00FF, #00F2FE);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  font-weight: 800;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+.pass-details h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.pass-details p {
+  font-size: 12px;
+  color: #a0aec0;
+  margin-bottom: 2px;
+}
+.pass-qr-box {
+  width: 60px; height: 60px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0a0a1a;
+  font-size: 28px;
+}
+.pass-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #c0c8db;
+  position: relative;
+  z-index: 1;
+}
+.pass-actions {
+  display: flex;
+  gap: 8px;
+}
+.pass-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.25s;
+}
+.pass-btn.primary {
+  background: linear-gradient(135deg, #00F2FE, #4FACFE);
+  color: #0a0a1a;
+  font-weight: 700;
+}
+.pass-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+}
+
+/* 2. Emergency Transit Helpline Grid */
+.helpline-section-box {
+  margin-bottom: 20px;
+}
+.helpline-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.helpline-card {
+  background: rgba(16, 24, 48, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.25s;
+}
+.helpline-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(235, 77, 75, 0.4);
+  box-shadow: 0 8px 25px rgba(235, 77, 75, 0.15);
+}
+.helpline-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.helpline-icon {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.helpline-icon.police { background: rgba(235, 77, 75, 0.15); color: #eb4d4b; }
+.helpline-icon.brta { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+.helpline-icon.traffic { background: rgba(0, 206, 201, 0.15); color: #00cec9; }
+.helpline-icon.women { background: rgba(253, 121, 168, 0.15); color: #fd79a8; }
+.helpline-text h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+body.light-mode .helpline-text h4 { color: #1a1a2e; }
+.helpline-text p {
+  font-size: 11px;
+  color: #8c96ac;
+}
+.helpline-number {
+  font-size: 14px;
+  font-weight: 800;
+  color: #00F2FE;
+  padding: 4px 10px;
+  background: rgba(0, 242, 254, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 242, 254, 0.2);
+}
+
+/* 3. Lost & Found / Overcharge Passenger Complaint Box */
+.complaint-section-box {
+  margin-bottom: 20px;
+}
+.complaint-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.complaint-item-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.complaint-status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+.complaint-status-badge.pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+.complaint-status-badge.resolved {
+  background: rgba(0, 184, 148, 0.15);
+  color: #00b894;
+}
+

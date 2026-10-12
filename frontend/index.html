@@ -60,6 +60,17 @@
           <button class="auth-tab active" data-tab="login">লগিন</button>
           <button class="auth-tab" data-tab="register">রেজিস্টার</button>
         </div>
+        <div class="auth-demo-quick-box">
+          <div class="demo-box-label"><i class="fas fa-bolt" style="color:#00cec9"></i> দ্রুত টেস্ট করতে ১-ক্লিক ডেমো লগইন:</div>
+          <div class="demo-btn-row">
+            <button type="button" class="modal-demo-btn user" onclick="directDemoLogin('user')">
+              <i class="fas fa-user-check"></i> ইউজার ডেমো (user)
+            </button>
+            <button type="button" class="modal-demo-btn admin" onclick="directDemoLogin('admin')">
+              <i class="fas fa-crown"></i> অ্যাডমিন ডেমো (admin)
+            </button>
+          </div>
+        </div>
         <form class="auth-form" id="auth-form">
           <div class="fg" id="name-fg" style="display:none">
             <label>নাম</label>
